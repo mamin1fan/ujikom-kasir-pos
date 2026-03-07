@@ -17,21 +17,6 @@
                 transition: background-color 0.15s ease;
             }
 
-            .badge-stock-low {
-                background: #fee2e2;
-                color: #dc2626;
-            }
-
-            .badge-stock-ok {
-                background: #dcfce7;
-                color: #16a34a;
-            }
-
-            .badge-stock-mid {
-                background: #fef3c7;
-                color: #d97706;
-            }
-
             .btn-icon {
                 width: 34px;
                 height: 34px;
@@ -204,6 +189,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                             @forelse ($barang as $index => $item)
+
                                                         <tr class="table-row-hover" title="Dibuat {{ $item->created_at }}">
 
                                                             {{-- Nomor --}}
@@ -228,6 +214,11 @@
                                                                 </span>
                                                             </td>
 
+                                                            {{-- Supplier --}}
+                                                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                                                {{ $item->supplier->nama ?? '-' }}
+                                                            </td>
+
                                                             {{-- Harga Beli --}}
                                                             <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                                                                 Rp {{ number_format($item->harga_beli, 0, ',', '.') }}
@@ -240,15 +231,19 @@
 
                                                             {{-- Stok --}}
                                                             <td class="px-6 py-4">
-                                                                <@php
-                                                                $stockClass = $item->stok < 10 
-                                                                    ? 'badge-stock-low' 
-                                                                    : ($item->stok < 30 ? 'badge-stock-mid' : 'badge-stock-ok');
-                                                                @endphp
+                                                                @php
+    if ($item->stok < 10) {
+        $stockClass = 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
+    } elseif ($item->stok < 30) {
+        $stockClass = 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400';
+    } else {
+        $stockClass = 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
+    }
+@endphp
 
-                                                                <span class="inline-block text-xs px-2.5 py-1 rounded-full font-semibold {{ $stockClass }}">
-                                                                    {{ $item->stok }} {{ $item->satuan }}
-                                                                </span>
+<span class="inline-block whitespace-nowrap text-xs px-2.5 py-1 rounded-full font-semibold {{ $stockClass }}">
+    {{ $item->stok }} {{ $item->satuan }}
+</span>
                                                             </td>
 
                                                             {{-- Aksi --}}
@@ -257,17 +252,25 @@
 
                                                                     {{-- Edit --}}
                                                                     <button class="btn-icon btn-edit" onclick="openEditModal({{ json_encode([
-                                                                        'id_barang' => $item->id_barang,
-                                                                        'barcode' => $item->barcode,
-                                                                        'nama' => $item->nama,
-                                                                        'id_kelompok_kategori' => $item->id_kelompok_kategori,
-                                                                        'id_kategori' => $item->id_kategori,
-                                                                        'id_supplier' => $item->id_supplier,
-                                                                        'satuan' => $item->satuan,
-                                                                        'harga_beli' => $item->harga_beli,
-                                                                        'harga_jual' => $item->harga_jual,
-                                                                        'stok' => $item->stok,
-                                                                    ]) }})">
+                                    'id_barang' => $item->id_barang,
+                                    'barcode' => $item->barcode,
+                                    'nama' => $item->nama,
+                                    'id_kelompok_kategori' => $item->id_kelompok_kategori,
+                                    'id_kategori' => $item->id_kategori,
+                                    'id_supplier' => $item->id_supplier,
+                                    'satuan' => $item->satuan,
+                                    'harga_beli' => $item->harga_beli,
+                                    'harga_jual' => $item->harga_jual,
+                                    'stok' => $item->stok,
+                                    'creator' => $item->creator->username ?? 'system',
+                                    'created_at' => $item->created_at
+                                        ? $item->created_at->format('d M Y') . ' • ' . $item->created_at->diffForHumans()
+                                        : '-',
+                                    'updater' => $item->updater->username ?? '-',
+                                    'updated_at' => $item->updated_at
+                                        ? $item->updated_at->format('d M Y') . ' • ' . $item->updated_at->diffForHumans()
+                                        : '-',
+                                ]) }})">
                                                                         ✏️ Edit
                                                                     </button>
 
@@ -415,6 +418,38 @@
 
                 <flux:input name="stok" label="Stok" type="number" id="edit_stok" />
 
+                <div class="pt-3 border-t text-xs text-gray-400 space-y-1">
+
+                    <div>
+                        Created by :
+                        <span id="edit_creator" class="text-gray-600 dark:text-gray-300">
+                            -
+                        </span>
+                    </div>
+
+                    <div>
+                        Created at :
+                        <span id="edit_created_at" class="text-gray-600 dark:text-gray-300">
+                            -
+                        </span>
+                    </div>
+
+                    <div>
+                        Updated by :
+                        <span id="edit_updater" class="text-gray-600 dark:text-gray-300">
+                            -
+                        </span>
+                    </div>
+
+                    <div>
+                        Updated at :
+                        <span id="edit_updated_at" class="text-gray-600 dark:text-gray-300">
+                            -
+                        </span>
+                    </div>
+
+                </div>
+
                 <div class="flex justify-end gap-2 pt-2">
                     <flux:modal.close>
                         <flux:button variant="ghost">Batal</flux:button>
@@ -467,6 +502,7 @@
 
             // ===================== OPEN EDIT MODAL =====================
             function openEditModal(data) {
+
                 const fields = {
                     edit_barcode: data.barcode,
                     edit_nama: data.nama,
@@ -479,24 +515,26 @@
                     edit_stok: data.stok,
                 };
 
-                // Populate form fields
                 Object.entries(fields).forEach(([id, value]) => {
                     const el = document.getElementById(id);
                     if (el) el.value = value ?? '';
                 });
 
-                // Set form action URL
+                document.getElementById('edit_creator').innerText = data.creator ?? '-';
+                document.getElementById('edit_created_at').innerText = data.created_at ?? '-';
+
+                document.getElementById('edit_updater').innerText = data.updater ?? '-';
+                document.getElementById('edit_updated_at').innerText = data.updated_at ?? '-';
+
                 document.getElementById('editProductForm').action =
                     ROUTES.update.replace(':id', data.id_barang);
 
-                // Open modal via Flux or fallback trigger
                 if (window.Flux?.showModal) {
                     window.Flux.showModal('edit-product');
                 } else {
                     document.getElementById('edit-modal-trigger').click();
                 }
             }
-
             // ===================== DELETE CONFIRMATION =====================
             function confirmDelete(id, name) {
                 Swal.fire({

@@ -15,7 +15,7 @@ class KategoriController extends Controller
     {
         $user = Auth::user();
 
-        $kategori = Kategori::with('kelompok')
+        $kategori = Kategori::with('kelompok', 'creator', 'updater')
             ->whereHas('kelompok', function ($q) use ($user) {
                 $q->where('id_sekolah', $user->id_sekolah)
                     ->where('is_delete', 0);

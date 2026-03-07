@@ -8,7 +8,11 @@ class Barang extends Model
 {
     protected $table = 'tb_barang';
     protected $primaryKey = 'id_barang';
-    public $timestamps = false;
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+    // public $timestamps = false;
 
     protected $fillable = [
         'id_sekolah',
@@ -49,12 +53,20 @@ class Barang extends Model
         return $this->belongsTo(Supplier::class, 'id_supplier', 'id_supplier');
     }
 
-    
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
 }
 
 
 
- // namespace App\Models;
+// namespace App\Models;
 
 // use Illuminate\Database\Eloquent\Model;
 

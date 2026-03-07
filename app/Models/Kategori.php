@@ -8,7 +8,6 @@ class Kategori extends Model
 {
     protected $table = 'tb_kategori';
     protected $primaryKey = 'id_kategori';
-    public $timestamps = false;
 
     protected $fillable = [
         'id_kelompok',
@@ -25,5 +24,13 @@ class Kategori extends Model
         return $this->belongsTo(KelompokKategori::class, 'id_kelompok', 'id_kelompok');
     }
 
-    
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
 }

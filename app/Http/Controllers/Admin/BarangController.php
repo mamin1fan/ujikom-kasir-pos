@@ -16,7 +16,12 @@ class BarangController extends Controller
     {
         $user = Auth::user();
 
-        $query = Barang::with(['kategori', 'supplier'])
+        $query = Barang::with([
+            'kategori',
+            'supplier',
+            'creator',
+            'updater'
+        ])
             ->where('is_delete', 0)
             ->where('id_sekolah', $user->id_sekolah);
 
@@ -40,7 +45,7 @@ class BarangController extends Controller
             ->get();
         $barang = $query->orderBy('id_barang', 'desc')->paginate(10);
 
-        
+
 
         return view('role.admin.barang', compact('barang', 'kategori', 'suppliers', 'kelompok_kategori'));
     }
@@ -116,6 +121,7 @@ class BarangController extends Controller
             'harga_beli' => $request->harga_beli,
             'harga_jual' => $request->harga_jual,
             'stok' => $request->stok,
+            'updated_by' => auth()->id(),
             'updated_at' => now(),
         ]);
 
