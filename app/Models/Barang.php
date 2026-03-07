@@ -48,6 +48,8 @@ class Barang extends Model
     {
         return $this->belongsTo(Supplier::class, 'id_supplier', 'id_supplier');
     }
+
+    
 }
 
 

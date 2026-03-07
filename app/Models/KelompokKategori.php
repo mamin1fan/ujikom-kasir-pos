@@ -12,7 +12,7 @@ class KelompokKategori extends Model
     protected $table = 'tb_kelompok_kategori';
     protected $primaryKey = 'id_kelompok';
 
-    public $timestamps = false; // karena hanya ada created_at
+
 
     protected $fillable = [
         'id_sekolah',
@@ -34,5 +34,10 @@ class KelompokKategori extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by', 'id_user');
+    }
+
+    public function kategori()
+    {
+        return $this->hasMany(Kategori::class, 'id_kelompok', 'id_kelompok');
     }
 }

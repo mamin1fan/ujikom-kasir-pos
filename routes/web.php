@@ -1,10 +1,15 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\Kategori;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SuperAdmin\BarangController as SuperAdminBarangController;
 use App\Http\Controllers\SuperAdmin\SekolahController as SuperAdminSekolahController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\BarangController as AdminBarangController;
+use App\Http\Controllers\Admin\KategoriController as AdminKategoriController;
+use App\Http\Controllers\Admin\KelompokKategoriController as AdminKelompokKategoriController;
 
 
 Route::get('/', function () {
@@ -43,9 +48,40 @@ Route::prefix('super-admin')->name('super-admin.')->group(function () {
     Route::put('/sekolah/{id}/status', [SuperAdminSekolahController::class, 'updateStatus'])->name('sekolah.status');
 });
 
+
+
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin', function () {
-        return view('role.admin.dashboard');
+
+    Route::prefix('admin')->name('admin.')->group(function () {
+
+        // Dashboard
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+        
+        // CRUD Barang
+        Route::get('barang', [AdminBarangController::class, 'index'])->name('barang.index');
+        Route::get('barang/create', [AdminBarangController::class, 'create'])->name('barang.create');
+        Route::post('barang', [AdminBarangController::class, 'store'])->name('barang.store');
+        Route::get('barang/{id}/edit', [AdminBarangController::class, 'edit'])->name('barang.edit');
+        Route::put('barang/{id}', [AdminBarangController::class, 'update'])->name('barang.update');
+        Route::delete('barang/{id}', [AdminBarangController::class, 'destroy'])->name('barang.destroy');
+        
+        // CRUD Kategori
+        Route::get('kategori', [AdminKategoriController::class, 'index'])->name('kategori.index');
+        Route::get('kategori/create', [AdminKategoriController::class, 'create'])->name('kategori.create');
+        Route::post('kategori', [AdminKategoriController::class, 'store'])->name('kategori.store');
+        Route::get('kategori/{id}/edit', [AdminKategoriController::class, 'edit'])->name('kategori.edit');
+        Route::put('kategori/{id}', [AdminKategoriController::class, 'update'])->name('kategori.update');
+        Route::delete('kategori/{id}', [AdminKategoriController::class, 'destroy'])->name('kategori.destroy');
+        
+        // CRUD Kelompok Kategori
+        Route::get('kelompok-kategori', [AdminKelompokKategoriController::class, 'index'])->name('kelompok-kategori.index');
+        Route::get('kelompok-kategori/create', [AdminKelompokKategoriController::class, 'create'])->name('kelompok-kategori.create');
+        Route::post('kelompok-kategori', [AdminKelompokKategoriController::class, 'store'])->name('kelompok-kategori.store');
+        Route::get('kelompok-kategori/{id}/edit', [AdminKelompokKategoriController::class, 'edit'])->name('kelompok-kategori.edit');
+        Route::put('kelompok-kategori/{id}', [AdminKelompokKategoriController::class, 'update'])->name('kelompok-kategori.update');
+        Route::delete('kelompok-kategori/{id}', [AdminKelompokKategoriController::class, 'destroy'])->name('kelompok-kategori.destroy');
+
+
     });
 });
 

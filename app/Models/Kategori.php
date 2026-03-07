@@ -24,4 +24,6 @@ class Kategori extends Model
     {
         return $this->belongsTo(KelompokKategori::class, 'id_kelompok', 'id_kelompok');
     }
+
+    
 }
