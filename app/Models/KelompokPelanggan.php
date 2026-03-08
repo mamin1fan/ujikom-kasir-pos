@@ -15,6 +15,11 @@ class KelompokPelanggan extends Model
         'nama_kelompok',
     ];
 
+    public function pelanggan()
+    {
+        return $this->hasMany(Pelanggan::class, 'id_kelompok_pelanggan');
+    }
+
     // Relasi ke Sekolah
     public function sekolah()
     {

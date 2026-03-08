@@ -9,7 +9,8 @@ class Supplier extends Model
     protected $table = 'tb_supplier';
     protected $primaryKey = 'id_supplier';
 
-    public $timestamps = false; 
+    public $timestamps = false;
+
     // karena hanya ada created_at manual
 
     protected $fillable = [
@@ -24,6 +25,11 @@ class Supplier extends Model
         'is_delete',
     ];
 
+    protected $casts = [
+        'created_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
+
     /*
     |--------------------------------------------------------------------------
     | RELATIONSHIP
@@ -33,5 +39,10 @@ class Supplier extends Model
     public function sekolah()
     {
         return $this->belongsTo(Sekolah::class, 'id_sekolah', 'id_sekolah');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

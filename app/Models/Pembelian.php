@@ -41,4 +41,10 @@ class Pembelian extends Model
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
+
+    // 🔹 Relasi ke Detail Pembelian
+    public function detailPembelian()
+    {
+        return $this->hasMany(DetailPembelian::class, 'id_pembelian', 'id_pembelian');
+    }
 }

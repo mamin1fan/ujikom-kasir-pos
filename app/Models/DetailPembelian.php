@@ -19,7 +19,6 @@ class DetailPembelian extends Model
         'subtotal',
     ];
 
-    // Relasi
     public function pembelian()
     {
         return $this->belongsTo(Pembelian::class, 'id_pembelian', 'id_pembelian');

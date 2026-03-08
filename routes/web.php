@@ -10,6 +10,12 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\BarangController as AdminBarangController;
 use App\Http\Controllers\Admin\KategoriController as AdminKategoriController;
 use App\Http\Controllers\Admin\KelompokKategoriController as AdminKelompokKategoriController;
+use App\Http\Controllers\Admin\PelangganController as AdminPelangganController;
+use App\Http\Controllers\Admin\KelompokPelangganController as AdminKelompokPelangganController;
+use App\Http\Controllers\Admin\SupplierController as AdminSupplierController;
+use App\Http\Controllers\Admin\LaporanPembelianController as AdminLaporanPembelianController;
+
+
 
 
 Route::get('/', function () {
@@ -80,6 +86,37 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('kelompok-kategori/{id}/edit', [AdminKelompokKategoriController::class, 'edit'])->name('kelompok-kategori.edit');
         Route::put('kelompok-kategori/{id}', [AdminKelompokKategoriController::class, 'update'])->name('kelompok-kategori.update');
         Route::delete('kelompok-kategori/{id}', [AdminKelompokKategoriController::class, 'destroy'])->name('kelompok-kategori.destroy');
+
+        // CRUD Pelanggan
+        Route::get('pelanggan', [AdminPelangganController::class, 'index'])->name('pelanggan.index');
+        Route::get('pelanggan/create', [AdminPelangganController::class, 'create'])->name('pelanggan.create');
+        Route::post('pelanggan', [AdminPelangganController::class, 'store'])->name('pelanggan.store');
+        Route::get('pelanggan/{id}/edit', [AdminPelangganController::class, 'edit'])->name('pelanggan.edit');
+        Route::put('pelanggan/{id}', [AdminPelangganController::class, 'update'])->name('pelanggan.update');
+        Route::delete('pelanggan/{id}', [AdminPelangganController::class, 'destroy'])->name('pelanggan.destroy');
+
+        // CRUD Kelompok Pelanggan
+        Route::get('kelompok-pelanggan', [AdminKelompokPelangganController::class, 'index'])->name('kelompok-pelanggan.index');
+        Route::get('kelompok-pelanggan/create', [AdminKelompokPelangganController::class, 'create'])->name('kelompok-pelanggan.create');
+        Route::post('kelompok-pelanggan', [AdminKelompokPelangganController::class, 'store'])->name('kelompok-pelanggan.store');
+        Route::get('kelompok-pelanggan/{id}/edit', [AdminKelompokPelangganController::class, 'edit'])->name('kelompok-pelanggan.edit');
+        Route::put('kelompok-pelanggan/{id}', [AdminKelompokPelangganController::class, 'update'])->name('kelompok-pelanggan.update');
+        Route::delete('kelompok-pelanggan/{id}', [AdminKelompokPelangganController::class, 'destroy'])->name('kelompok-pelanggan.destroy');
+        
+        // CRUD Kelompok Pelanggan
+        Route::get('supplier', [AdminSupplierController::class, 'index'])->name('supplier.index');
+        Route::get('supplier/create', [AdminSupplierController::class, 'create'])->name('supplier.create');
+        Route::post('supplier', [AdminSupplierController::class, 'store'])->name('supplier.store');
+        Route::get('supplier/{id}/edit', [AdminSupplierController::class, 'edit'])->name('supplier.edit');
+        Route::put('supplier/{id}', [AdminSupplierController::class, 'update'])->name('supplier.update');
+        Route::delete('supplier/{id}', [AdminSupplierController::class, 'destroy'])->name('supplier.destroy');
+
+        // CRUD Laporan Pembelian
+        Route::get('laporan-pembelian', [AdminLaporanPembelianController::class, 'laporanPembelian'])->name('laporan-pembelian.index');
+        Route::get('laporan-pembelian/print', [AdminLaporanPembelianController::class, 'printPembelian'])->name('laporan-pembelian.print');
+
+
+        
 
 
     });
