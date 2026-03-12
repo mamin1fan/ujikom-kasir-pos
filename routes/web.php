@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\PelangganController as AdminPelangganController;
 use App\Http\Controllers\Admin\KelompokPelangganController as AdminKelompokPelangganController;
 use App\Http\Controllers\Admin\SupplierController as AdminSupplierController;
 use App\Http\Controllers\Admin\LaporanPembelianController as AdminLaporanPembelianController;
+use App\Http\Controllers\Admin\LaporanStokController as AdminLaporanStokController;
 
 
 
@@ -62,7 +63,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
         // Dashboard
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
-        
+
         // CRUD Barang
         Route::get('barang', [AdminBarangController::class, 'index'])->name('barang.index');
         Route::get('barang/create', [AdminBarangController::class, 'create'])->name('barang.create');
@@ -70,7 +71,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('barang/{id}/edit', [AdminBarangController::class, 'edit'])->name('barang.edit');
         Route::put('barang/{id}', [AdminBarangController::class, 'update'])->name('barang.update');
         Route::delete('barang/{id}', [AdminBarangController::class, 'destroy'])->name('barang.destroy');
-        
+
         // CRUD Kategori
         Route::get('kategori', [AdminKategoriController::class, 'index'])->name('kategori.index');
         Route::get('kategori/create', [AdminKategoriController::class, 'create'])->name('kategori.create');
@@ -78,7 +79,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('kategori/{id}/edit', [AdminKategoriController::class, 'edit'])->name('kategori.edit');
         Route::put('kategori/{id}', [AdminKategoriController::class, 'update'])->name('kategori.update');
         Route::delete('kategori/{id}', [AdminKategoriController::class, 'destroy'])->name('kategori.destroy');
-        
+
         // CRUD Kelompok Kategori
         Route::get('kelompok-kategori', [AdminKelompokKategoriController::class, 'index'])->name('kelompok-kategori.index');
         Route::get('kelompok-kategori/create', [AdminKelompokKategoriController::class, 'create'])->name('kelompok-kategori.create');
@@ -102,7 +103,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('kelompok-pelanggan/{id}/edit', [AdminKelompokPelangganController::class, 'edit'])->name('kelompok-pelanggan.edit');
         Route::put('kelompok-pelanggan/{id}', [AdminKelompokPelangganController::class, 'update'])->name('kelompok-pelanggan.update');
         Route::delete('kelompok-pelanggan/{id}', [AdminKelompokPelangganController::class, 'destroy'])->name('kelompok-pelanggan.destroy');
-        
+
         // CRUD Kelompok Pelanggan
         Route::get('supplier', [AdminSupplierController::class, 'index'])->name('supplier.index');
         Route::get('supplier/create', [AdminSupplierController::class, 'create'])->name('supplier.create');
@@ -115,10 +116,13 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('laporan-pembelian', [AdminLaporanPembelianController::class, 'laporanPembelian'])->name('laporan-pembelian.index');
         Route::get('laporan-pembelian/print', [AdminLaporanPembelianController::class, 'printPembelian'])->name('laporan-pembelian.print');
 
-
-        
-
-
+        // Laporan Stok
+        Route::get('laporan-stok', [AdminLaporanStokController::class, 'stok'])
+            ->name('laporan.stok');
+        Route::get('laporan-stok/excel', [AdminLaporanStokController::class, 'exportExcel'])
+            ->name('laporan.stok.excel');
+        Route::get('laporan-stok/pdf', [AdminLaporanStokController::class, 'exportPdf'])
+            ->name('laporan.stok.pdf');
     });
 });
 
