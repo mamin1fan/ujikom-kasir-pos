@@ -227,7 +227,7 @@
             <div class="doc-header">
                 <div class="doc-brand">
                     <div class="doc-logo">
-                        <img src="{{ asset('images/logo.jpeg') }}" width="22">
+                        <img src="{{ asset('images/.jpg') }}" width="22">
                     </div>
                     <div>
                         <div class="doc-brand-name">Laporan Pembelian</div>

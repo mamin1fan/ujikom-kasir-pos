@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\KelompokKategoriController as AdminKelompokKatego
 use App\Http\Controllers\Admin\PelangganController as AdminPelangganController;
 use App\Http\Controllers\Admin\KelompokPelangganController as AdminKelompokPelangganController;
 use App\Http\Controllers\Admin\SupplierController as AdminSupplierController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\TransaksiPembelianController as AdminTransaksiPembelianController;
 use App\Http\Controllers\Admin\LaporanPembelianController as AdminLaporanPembelianController;
 
 
@@ -62,7 +64,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
         // Dashboard
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
-        
+
         // CRUD Barang
         Route::get('barang', [AdminBarangController::class, 'index'])->name('barang.index');
         Route::get('barang/create', [AdminBarangController::class, 'create'])->name('barang.create');
@@ -70,7 +72,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('barang/{id}/edit', [AdminBarangController::class, 'edit'])->name('barang.edit');
         Route::put('barang/{id}', [AdminBarangController::class, 'update'])->name('barang.update');
         Route::delete('barang/{id}', [AdminBarangController::class, 'destroy'])->name('barang.destroy');
-        
+
         // CRUD Kategori
         Route::get('kategori', [AdminKategoriController::class, 'index'])->name('kategori.index');
         Route::get('kategori/create', [AdminKategoriController::class, 'create'])->name('kategori.create');
@@ -78,7 +80,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('kategori/{id}/edit', [AdminKategoriController::class, 'edit'])->name('kategori.edit');
         Route::put('kategori/{id}', [AdminKategoriController::class, 'update'])->name('kategori.update');
         Route::delete('kategori/{id}', [AdminKategoriController::class, 'destroy'])->name('kategori.destroy');
-        
+
         // CRUD Kelompok Kategori
         Route::get('kelompok-kategori', [AdminKelompokKategoriController::class, 'index'])->name('kelompok-kategori.index');
         Route::get('kelompok-kategori/create', [AdminKelompokKategoriController::class, 'create'])->name('kelompok-kategori.create');
@@ -102,7 +104,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('kelompok-pelanggan/{id}/edit', [AdminKelompokPelangganController::class, 'edit'])->name('kelompok-pelanggan.edit');
         Route::put('kelompok-pelanggan/{id}', [AdminKelompokPelangganController::class, 'update'])->name('kelompok-pelanggan.update');
         Route::delete('kelompok-pelanggan/{id}', [AdminKelompokPelangganController::class, 'destroy'])->name('kelompok-pelanggan.destroy');
-        
+
         // CRUD Kelompok Pelanggan
         Route::get('supplier', [AdminSupplierController::class, 'index'])->name('supplier.index');
         Route::get('supplier/create', [AdminSupplierController::class, 'create'])->name('supplier.create');
@@ -111,12 +113,29 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::put('supplier/{id}', [AdminSupplierController::class, 'update'])->name('supplier.update');
         Route::delete('supplier/{id}', [AdminSupplierController::class, 'destroy'])->name('supplier.destroy');
 
+        // CRUD User
+        Route::get('user', [AdminUserController::class, 'index'])->name('user.index');
+        Route::get('user/create', [AdminUserController::class, 'create'])->name('user.create');
+        Route::post('user', [AdminUserController::class, 'store'])->name('user.store');
+        Route::get('user/{id}/edit', [AdminUserController::class, 'edit'])->name('user.edit');
+        Route::put('user/{id}', [AdminUserController::class, 'update'])->name('user.update');
+        Route::delete('user/{id}', [AdminUserController::class, 'destroy'])->name('user.destroy');
+
+        // CRUD Laporan Pembelian
+        Route::get('transaksi-pembelian', [AdminTransaksiPembelianController::class, 'index'])->name('transaksi-pembelian.index');
+        Route::get('transaksi-pembelian/create', [AdminTransaksiPembelianController::class, 'create'])->name('transaksi-pembelian.create');
+        Route::post('transaksi-pembelian', [AdminTransaksiPembelianController::class, 'store'])->name('transaksi-pembelian.store');
+        Route::get('transaksi-pembelian/{id}/edit', [AdminTransaksiPembelianController::class, 'edit'])->name('transaksi-pembelian.edit');
+        Route::put('transaksi-pembelian/{id}', [AdminTransaksiPembelianController::class, 'update'])->name('transaksi-pembelian.update');
+        Route::delete('transaksi-pembelian/{id}', [AdminTransaksiPembelianController::class, 'destroy'])->name('transaksi-pembelian.destroy');
+
+
         // CRUD Laporan Pembelian
         Route::get('laporan-pembelian', [AdminLaporanPembelianController::class, 'laporanPembelian'])->name('laporan-pembelian.index');
         Route::get('laporan-pembelian/print', [AdminLaporanPembelianController::class, 'printPembelian'])->name('laporan-pembelian.print');
 
 
-        
+
 
 
     });
