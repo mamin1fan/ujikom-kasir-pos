@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pembelian;
 use App\Models\Supplier;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class TransaksiPembelianController extends Controller
 {
@@ -33,7 +35,7 @@ class TransaksiPembelianController extends Controller
         ]);
 
         Pembelian::create([
-            'id_sekolah' => 1, // sesuaikan kalau multi sekolah
+            'id_sekolah' => Auth::user()->id_sekolah,
             'id_supplier' => $request->id_supplier,
             'id_user' => Auth::id(),
 

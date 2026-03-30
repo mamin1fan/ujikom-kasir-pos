@@ -22,8 +22,7 @@ class BarangController extends Controller
             'creator',
             'updater'
         ])
-            ->where('is_delete', 0)
-            ->where('id_sekolah', $user->id_sekolah);
+            ->where('is_delete', 0);
 
         // SEARCH
         if ($request->search) {
@@ -89,7 +88,6 @@ class BarangController extends Controller
     public function update(Request $request, $id)
     {
         $barang = Barang::where('id_barang', $id)
-            ->where('id_sekolah', Auth::user()->id_sekolah)
             ->firstOrFail();
 
         $rules = [
@@ -131,7 +129,6 @@ class BarangController extends Controller
     public function destroy($id)
     {
         $barang = Barang::where('id_barang', $id)
-            ->where('id_sekolah', Auth::user()->id_sekolah)
             ->firstOrFail();
 
         $barang->update([

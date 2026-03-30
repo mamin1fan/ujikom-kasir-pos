@@ -12,9 +12,10 @@
             {{-- Role-based Menus --}}
             @auth
                 {{-- Super Admin --}}
-                @if(auth()->user()->role->nama_role === 'super admin')
+                @if (auth()->user()->role->nama_role === 'super admin')
                     <div class="pt-4">
-                        <h3 class="px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                        <h3
+                            class="px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                             Master Data
                         </h3>
                         <div class="space-y-1">
@@ -40,20 +41,21 @@
                 @endif
 
                 {{-- Admin --}}
-                @if(auth()->user()->role->nama_role === 'admin')
-
+                @if (auth()->user()->role->nama_role === 'admin')
                     <div class="pt-4">
 
                         {{-- DASHBOARD --}}
-                        <h3 class="px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                        <h3
+                            class="px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                             Dashboard
                         </h3>
 
                         <div class="space-y-1">
-                            <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200
-                    {{ request()->routeIs('admin.dashboard') ?
-                    'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-200' :
-                    'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                            <a href="{{ route('admin.dashboard') }}"
+                                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200
+                    {{ request()->routeIs('admin.dashboard')
+                        ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-200'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
 
                                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -68,7 +70,8 @@
 
 
                         {{-- MASTER DATA --}}
-                        <h3 class="px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                        <h3
+                            class="px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                             Master Data
                         </h3>
 
@@ -165,7 +168,8 @@
 
 
                         {{-- TRANSAKSI --}}
-                        <h3 class="px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                        <h3
+                            class="px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                             Transaksi
                         </h3>
 
@@ -190,7 +194,8 @@
 
 
                         {{-- LAPORAN --}}
-                        <h3 class="px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                        <h3
+                            class="px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                             Laporan
                         </h3>
 
@@ -201,16 +206,18 @@
                     {{ request()->routeIs('admin.laporan-pembelian.*') ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-200' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
 
                                 <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6h6v6" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 17v-6h6v6" />
                                 </svg>
 
                                 Laporan Pembelian
                             </a>
 
-                            <a href="#"
-                                class="flex items-center px-4 py-2 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <a href="{{ route('admin.laporan.stok') }}"
+                                class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200
+                    {{ request()->routeIs('admin.laporan-stok.*') ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-200' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
                                 <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18" />
+                                <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18" />
                                 </svg>
                                 Laporan Stok
                             </a>
@@ -218,7 +225,6 @@
                         </div>
 
                     </div>
-
                 @endif
             @endauth
 

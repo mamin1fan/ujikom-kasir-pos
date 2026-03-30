@@ -32,6 +32,15 @@ class Barang extends Model
         'is_delete',
     ];
 
+    protected static function booted()
+    {
+        static::addGlobalScope('sekolah', function ($query) {
+            if (auth()->check()) {
+                $query->where('id_sekolah', auth()->user()->id_sekolah);
+            }
+        });
+    }
+
     // Relasi
     public function sekolah()
     {

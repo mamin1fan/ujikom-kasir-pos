@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Models\Kategori;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
+
 use App\Http\Controllers\SuperAdmin\BarangController as SuperAdminBarangController;
 use App\Http\Controllers\SuperAdmin\SekolahController as SuperAdminSekolahController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -16,6 +17,9 @@ use App\Http\Controllers\Admin\SupplierController as AdminSupplierController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\TransaksiPembelianController as AdminTransaksiPembelianController;
 use App\Http\Controllers\Admin\LaporanPembelianController as AdminLaporanPembelianController;
+use App\Http\Controllers\Admin\LaporanStokController as AdminLaporanStokController;
+
+use App\Http\Controllers\Kasir\DashboardController as KasirDashboardController;
 
 
 
@@ -134,17 +138,20 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('laporan-pembelian', [AdminLaporanPembelianController::class, 'laporanPembelian'])->name('laporan-pembelian.index');
         Route::get('laporan-pembelian/print', [AdminLaporanPembelianController::class, 'printPembelian'])->name('laporan-pembelian.print');
 
-
-
-
-
+        // Laporan Stok
+        Route::get('laporan-stok', [AdminLaporanStokController::class, 'stok'])
+            ->name('laporan.stok');
+        Route::get('laporan-stok/excel', [AdminLaporanStokController::class, 'exportExcel'])
+            ->name('laporan.stok.excel');
+        Route::get('laporan-stok/pdf', [AdminLaporanStokController::class, 'exportPdf'])
+            ->name('laporan.stok.pdf');
     });
 });
 
 
 Route::middleware(['auth', 'role:kasir'])->group(function () {
-    Route::get('/kasir', function () {
-        return view('role.kasir.dashboard');
+    Route::prefix('kasir')->name('kasir.')->group(function () {
+        Route::get('/', [KasirDashboardController::class, 'index'])->name('dashboard');
     });
 });
 
