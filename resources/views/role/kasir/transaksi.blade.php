@@ -57,8 +57,8 @@
                 class="shrink-0 px-5 py-2.5 bg-white border-b border-slate-200 flex items-center gap-2 overflow-x-auto">
                 <template x-for="kat in kategori" :key="kat">
                     <button @click="filterKat = kat" :class="filterKat === kat
-                        ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                        : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:text-slate-700'"
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                            : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:text-slate-700'"
                         class="shrink-0 px-3.5 py-1.5 rounded-full border text-xs font-semibold transition-all duration-150 capitalize">
                         <span x-text="kat === 'semua' ? 'Semua' : kat"></span>
                     </button>
@@ -81,8 +81,8 @@
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
                     <template x-for="p in produkTampil" :key="p.id">
                         <button @click="tambah(p)" :disabled="p.stok === 0" :class="p.stok === 0
-                            ? 'opacity-40 cursor-not-allowed'
-                            : 'hover:shadow-md hover:-translate-y-0.5 cursor-pointer hover:border-slate-300'"
+                                ? 'opacity-40 cursor-not-allowed'
+                                : 'hover:shadow-md hover:-translate-y-0.5 cursor-pointer hover:border-slate-300'"
                             class="group relative flex flex-col bg-white rounded-xl border border-slate-200 p-3.5 text-left transition-all duration-150">
 
                             {{-- Stok badge --}}
@@ -115,11 +115,12 @@
         {{-- ════════════════════════════════════════
         KANAN — Panel Transaksi
         ════════════════════════════════════════ --}}
-        
-        <aside class="w-[360px] xl:w-[400px] shrink-0 flex flex-col h-screen overflow-hidden bg-white border-l border-slate-200">
+
+        <aside
+            class="w-[360px] xl:w-[400px] shrink-0 flex flex-col h-screen overflow-hidden bg-white border-l border-slate-200">
 
             {{-- Header --}}
-            <div class="shrink-0 px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+            <div class="shrink-0 px-5 py-4 border-b border-slate-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <h2 class="text-sm font-bold text-slate-800">Transaksi</h2>
                     <span x-show="totalItem > 0" x-text="totalItem"
@@ -133,8 +134,7 @@
                     <button @click="kosongkan()" x-show="keranjang.length > 0"
                         class="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition"
                         title="Kosongkan">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                         </svg>
@@ -142,133 +142,39 @@
                 </div>
             </div>
 
-            {{-- Jenis Transaksi --}}
-            <div class="shrink-0 px-5 py-3 border-b border-slate-100">
-                <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Jenis
-                    Transaksi</label>
-                <div class="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-xl">
-                    <button @click="gantiJenis('tunai')"
-                        :class="jenis === 'tunai' ? 'bg-white text-slate-800 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700'"
-                        class="flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-semibold transition-all duration-200">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                        </svg>
-                        Tunai
-                    </button>
-                    <button @click="gantiJenis('nontunai')"
-                        :class="jenis === 'nontunai' ? 'bg-white text-slate-800 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700'"
-                        class="flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-semibold transition-all duration-200">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3" />
-                        </svg>
-                        Non-Tunai
-                    </button>
-                </div>
-            </div>
-
-            {{-- Panel Tunai --}}
-            <div x-show="jenis === 'tunai'" x-transition:enter="transition duration-150"
-                x-transition:enter-start="opacity-0"
-                class="shrink-0 px-5 py-3 border-b border-slate-100 space-y-2.5">
-                <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400">Uang
-                    Diterima</label>
-                <div class="relative">
-                    <span
-                        class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">Rp</span>
-                    <input x-model.number="bayar" @input="bayar = Math.max(0, bayar)" type="number" min="0"
-                        placeholder="0"
-                        class="w-full pl-9 pr-3 py-2.5 text-sm font-bold bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition" />
-                </div>
-                <div class="flex flex-wrap gap-1.5">
-                    <template x-for="n in quickCash" :key="n">
-                        <button @click="bayar += n"
-                            class="text-[10px] font-bold font-mono px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-slate-600 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition"
-                            x-text="'+' + fmtShort(n)">
-                        </button>
-                    </template>
-                    <button @click="bayar = total"
-                        class="text-[10px] font-bold px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-slate-600 hover:border-green-300 hover:text-green-600 hover:bg-green-50 transition">
-                        Pas ✓
-                    </button>
-                </div>
-                <div x-show="bayar > 0" x-transition
-                    class="flex justify-between items-center px-3 py-2 rounded-lg border"
-                    :class="kembalian < 0 ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100'">
-                    <div>
-                        <p class="text-[10px] font-semibold"
-                            :class="kembalian < 0 ? 'text-red-500' : 'text-green-600'">
-                            Kembalian</p>
-                        <p x-show="kembalian < 0" class="text-[10px] text-red-400 leading-none mt-0.5">Uang kurang
-                        </p>
-                    </div>
-                    <span class="text-sm font-black" :class="kembalian < 0 ? 'text-red-600' : 'text-green-700'"
-                        x-text="kembalian < 0 ? '− Rp ' + fmt(Math.abs(kembalian)) : 'Rp ' + fmt(kembalian)">
-                    </span>
-                </div>
-            </div>
-
-            {{-- Panel Non-Tunai --}}
-            <div x-show="jenis === 'nontunai'" x-transition:enter="transition duration-150"
-                x-transition:enter-start="opacity-0" class="shrink-0 px-5 py-3 border-b border-slate-100 space-y-2">
-                <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400">Metode
-                    Pembayaran</label>
-                <div class="grid grid-cols-2 gap-2">
-                    <template x-for="m in metodeNonTunai" :key="m.id">
-                        <button @click="metodePembayaran = m.id" :class="metodePembayaran === m.id
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-slate-200 text-slate-500 hover:border-slate-300 bg-white hover:bg-slate-50'"
-                            class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-xs font-semibold transition-all duration-150">
-                            <span class="text-base shrink-0" x-text="m.icon"></span>
-                            <div class="text-left flex-1 min-w-0">
-                                <p class="font-bold leading-none" x-text="m.label"></p>
-                                <p class="text-[10px] mt-0.5 opacity-60 leading-none" x-text="m.sub"></p>
-                            </div>
-                            <svg x-show="metodePembayaran === m.id" class="w-3.5 h-3.5 text-blue-500 shrink-0"
-                                fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                            </svg>
-                        </button>
-                    </template>
-                </div>
-                <div x-show="metodePembayaran === 'transfer'" x-transition class="pt-1">
-                    <div class="relative">
-                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-300" fill="none"
-                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5" />
-                        </svg>
-                        <input x-model="noRef" type="text" placeholder="No. Referensi (opsional)"
-                            class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition" />
-                    </div>
-                </div>
-            </div>
-
             {{-- Pelanggan --}}
             <div class="shrink-0 px-5 py-3 border-b border-slate-100">
-                <label
-                    class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Pelanggan</label>
-                <div class="relative">
-                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-300 pointer-events-none"
-                        fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                    </svg>
-                    <select x-model="pelanggan"
-                        class="w-full pl-9 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-700 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition cursor-pointer">
-                        <option value="">— Walk-in Customer —</option>
-                        @foreach($pelanggan as $p)
-                            <option value="{{ $p->nama_pelanggan }}">{{ $p->nama_pelanggan }}</option>
-                        @endforeach
-                    </select>
-                    <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none"
-                        fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m19 9-7 7-7-7" />
-                    </svg>
+                <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                    Pelanggan
+                </label>
+
+                <div class="flex gap-2">
+
+                    {{-- Pelanggan Biasa --}}
+                    <button @click="modePelanggan = 'umum'; pelangganData=null; pelanggan = ''" :class="modePelanggan === 'umum'
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'"
+                        class="flex-1 py-2 rounded-lg border text-xs font-semibold transition">
+                        Pelanggan Biasa
+                    </button>
+
+                    {{-- Pelanggan Khusus --}}
+                    <button @click="modePelanggan = 'khusus'; openModalPelanggan = true" :class="modePelanggan === 'khusus'
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'"
+                        class="flex-1 py-2 rounded-lg border text-xs font-semibold transition">
+                        Pelanggan Khusus
+                    </button>
+
                 </div>
+
+                {{-- Info pelanggan terpilih --}}
+                <template x-if="pelangganData">
+                    <div class="mt-2 text-xs text-slate-600 bg-slate-50 px-3 py-2 rounded-lg border">
+                        👤 <span x-text="pelangganData.nama"></span>
+                        <span class="text-slate-400" x-text="'(' + pelangganData.kelompok + ')'"></span>
+                    </div>
+                </template>
             </div>
 
             {{-- Keranjang — flex-1 + overflow-y-auto supaya bisa scroll --}}
@@ -300,8 +206,7 @@
                             </div>
 
                             <div class="flex-1 min-w-0">
-                                <p class="text-xs font-bold text-slate-800 truncate leading-none"
-                                    x-text="item.nama">
+                                <p class="text-xs font-bold text-slate-800 truncate leading-none" x-text="item.nama">
                                 </p>
                                 <p class="text-[11px] text-slate-400 mt-1 leading-none"
                                     x-text="'@ Rp ' + fmt(item.harga)"></p>
@@ -348,8 +253,7 @@
                             <span class="text-slate-400" x-show="totalItem > 0"
                                 x-text="'(' + totalItem + ' item)'"></span>
                         </span>
-                        <span class="font-semibold text-slate-700 tabular-nums"
-                            x-text="'Rp ' + fmt(subtotal)"></span>
+                        <span class="font-semibold text-slate-700 tabular-nums" x-text="'Rp ' + fmt(subtotal)"></span>
                     </div>
                     <div class="flex justify-between items-center text-xs">
                         <span class="text-slate-500">Diskon</span>
@@ -374,24 +278,15 @@
                     <span class="text-xl font-black text-blue-600 tabular-nums" x-text="'Rp ' + fmt(total)"></span>
                 </div>
 
-                <button @click="proses()" :disabled="!bisaBayar" :class="bisaBayar
-                ? 'bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white shadow-md shadow-blue-200/60 cursor-pointer'
-                : 'bg-slate-100 text-slate-400 cursor-not-allowed'"
+                <button @click="openModalBayar = true" :disabled="keranjang.length === 0" :class="keranjang.length > 0
+                    ? 'bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white shadow-md shadow-blue-200/60 cursor-pointer'
+                    : 'bg-slate-100 text-slate-400 cursor-not-allowed'"
                     class="w-full py-3.5 rounded-xl text-sm font-bold tracking-wide transition-all duration-150 flex items-center justify-center gap-2">
-                    <template x-if="jenis === 'tunai'">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                        </svg>
-                    </template>
-                    <template x-if="jenis === 'nontunai'">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3" />
-                    </template>
-                    <span x-text="jenis === 'tunai' ? 'Bayar Tunai' : 'Konfirmasi ' + labelMetode"></span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <span>Bayar</span>
                 </button>
 
                 <p x-show="!bisaBayar && keranjang.length > 0 && jenis === 'tunai' && bayar < total && bayar > 0"
@@ -403,6 +298,170 @@
                 </p>
             </div>
         </aside>
+
+        {{-- MODAL PEMBAYARAN --}}
+        <div x-show="openModalBayar" x-transition
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+
+            <div @click.outside="openModalBayar = false"
+                class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+                {{-- HEADER --}}
+                <div class="flex items-center justify-between px-5 py-3 border-b bg-white">
+                    <h3 class="text-sm font-bold text-slate-800">Pembayaran</h3>
+                    <button @click="openModalBayar = false" class="text-slate-400 hover:text-red-500 text-lg">✕</button>
+                </div>
+
+                {{-- TOTAL --}}
+                <div class="px-5 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white">
+                    <p class="text-[10px] uppercase tracking-widest opacity-80">Total Bayar</p>
+                    <p class="text-3xl font-black tabular-nums mt-1">
+                        Rp <span x-text="fmt(total)"></span>
+                    </p>
+                    <p class="text-[10px] opacity-80 mt-1">
+                        <span x-text="totalItem"></span> item
+                    </p>
+                </div>
+
+                {{-- JENIS --}}
+                <div class="px-5 py-3 border-b">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button @click="gantiJenis('tunai')" :class="jenis === 'tunai'
+                    ? 'bg-blue-600 text-white shadow'
+                    : 'bg-slate-100 text-slate-500'" class="py-2 rounded-lg text-xs font-bold transition">
+                            Tunai
+                        </button>
+
+                        <button @click="gantiJenis('nontunai')" :class="jenis === 'nontunai'
+                    ? 'bg-blue-600 text-white shadow'
+                    : 'bg-slate-100 text-slate-500'" class="py-2 rounded-lg text-xs font-bold transition">
+                            Non Tunai
+                        </button>
+                    </div>
+                </div>
+
+                {{-- ===================== --}}
+                {{-- SLIDE CONTAINER --}}
+                {{-- ===================== --}}
+                <div class="overflow-hidden">
+
+                    <div class="flex transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]" :style="jenis === 'tunai'
+                    ? 'transform: translateX(0%)'
+                    : 'transform: translateX(-100%)'">
+
+                        {{-- ===================== --}}
+                        {{-- PANEL TUNAI --}}
+                        {{-- ===================== --}}
+                        <div class="w-full shrink-0 px-5 py-4 space-y-4 border-b">
+
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-slate-400">Uang Diterima</label>
+
+                                <div class="relative mt-1">
+                                    <span
+                                        class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">Rp</span>
+                                    <input x-model.number="bayar" type="number"
+                                        @keydown.enter="bisaBayar && prosesBayar()"
+                                        class="w-full pl-10 pr-3 py-3 text-lg font-bold bg-slate-50 border rounded-xl focus:ring-2 focus:ring-blue-500"
+                                        placeholder="0">
+                                </div>
+                            </div>
+
+                            {{-- QUICK CASH --}}
+                            <div class="grid grid-cols-3 gap-2">
+                                <template x-for="n in quickCash" :key="n">
+                                    <button @click="bayar += n"
+                                        class="py-2 text-xs font-semibold bg-white border rounded-lg hover:bg-blue-50">
+                                        +<span x-text="fmtShort(n)"></span>
+                                    </button>
+                                </template>
+
+                                <button @click="bayar = total"
+                                    class="py-2 text-xs font-bold bg-green-100 text-green-700 rounded-lg col-span-3">
+                                    Uang Pas ✓
+                                </button>
+                            </div>
+
+                            {{-- KEMBALIAN --}}
+                            <div x-show="bayar > 0" class="p-3 rounded-xl text-center"
+                                :class="kembalian < 0 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'">
+
+                                <p class="text-xs font-semibold">
+                                    <span x-text="kembalian < 0 ? 'Kurang Bayar' : 'Kembalian'"></span>
+                                </p>
+
+                                <p class="text-xl font-black mt-1">
+                                    <span x-text="kembalian < 0
+                                ? '− Rp ' + fmt(Math.abs(kembalian))
+                                : 'Rp ' + fmt(kembalian)">
+                                    </span>
+                                </p>
+                            </div>
+
+                        </div>
+
+                        {{-- ===================== --}}
+                        {{-- PANEL NON TUNAI --}}
+                        {{-- ===================== --}}
+                        <div class="w-full shrink-0 px-5 py-4 space-y-3 border-b">
+
+
+                            <div x-show="metodePembayaran === 'qris'" class="text-center">
+
+                                <template x-if="isLoadingQR">
+                                    <p class="text-xs text-slate-400">Membuat QR...</p>
+                                </template>
+
+                                <template x-if="!isLoadingQR && qrImage">
+                                    <div>
+                                        <img :src="qrImage" class="w-48 mx-auto">
+                                        <p class="text-xs mt-2 text-slate-500">
+                                            Scan untuk bayar
+                                        </p>
+                                    </div>
+                                </template>
+
+                            </div>
+
+                            <label class="text-[10px] font-bold uppercase text-slate-400">Metode</label>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <template x-for="m in metodeNonTunai" :key="m.id">
+                                    <button @click="metodePembayaran = m.id" :class="metodePembayaran === m.id
+                                ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                : 'border-slate-200 text-slate-500'"
+                                        class="border px-3 py-3 rounded-xl text-xs font-semibold">
+                                        <span x-text="m.label"></span>
+                                    </button>
+                                </template>
+                            </div>
+
+                            <div x-show="metodePembayaran === 'transfer'">
+                                <input x-model="noRef" type="text" placeholder="No Referensi"
+                                    class="w-full px-3 py-2 text-xs border rounded-lg focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                {{-- FOOTER --}}
+                <div class="flex gap-2 p-4 bg-white">
+                    <button @click="openModalBayar = false"
+                        class="flex-1 py-3 text-xs rounded-xl bg-slate-100 font-semibold">
+                        Batal
+                    </button>
+
+                    <button @click="prosesBayar()" :disabled="!bisaBayar" :class="bisaBayar
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-slate-200 text-slate-400 cursor-not-allowed'"
+                        class="flex-1 py-3 text-sm rounded-xl font-bold transition">
+                        Bayar Sekarang
+                    </button>
+                </div>
+
+            </div>
+        </div>
 
         {{-- Modal Sukses --}}
         <flux:modal name="sukses-modal" class="max-w-sm">
@@ -471,10 +530,21 @@
             document.addEventListener('alpine:init', () => {
                 Alpine.data('pos', () => ({
 
+                    qrImage: '',
+                    isLoadingQR: false,
+
+                    modePelanggan: 'umum',
+                    openModalPelanggan: false,
+                    searchPelanggan: '',
+                    pelanggan: '',
+                    pelangganData: null,
+
                     // ── UI State ──
                     cari: '',
                     filterKat: 'semua',
+                    filterKelompok: '',      // FIX: dipindahkan ke root state
                     tanggal: '',
+                    openModalBayar: false,   // FIX: dipindahkan ke root state
 
                     // ── Transaksi State ──
                     pelanggan: '',
@@ -575,11 +645,19 @@
                         this.jenis = j;
                         this.bayar = 0;
                         this.metodePembayaran = j === 'tunai' ? 'cash' : 'qris';
+
+                        if (j === 'nontunai') {
+                            this.generateQR();
+                        }
                     },
-                    proses() {
+
+                    // FIX: prosesBayar() — fungsi yang sebelumnya tidak ada (hanya ada proses())
+                    prosesBayar() {
                         if (!this.bisaBayar) return;
+                        this.openModalBayar = false;
                         Flux.modal('sukses-modal').show();
                     },
+
                     payloadTransaksi() {
                         return {
                             no_transaksi: this.noTransaksi,
@@ -631,6 +709,49 @@
                             + String(d.getMonth() + 1).padStart(2, '0')
                             + String(d.getDate()).padStart(2, '0')
                             + '-' + String(Math.floor(Math.random() * 9999)).padStart(4, '0');
+                    },
+                    async generateQR() {
+                        try {
+                            this.isLoadingQR = true;
+
+                            const res = await fetch('/kasir/qris/generate', {
+                                method: 'POST',
+                                credentials: 'same-origin',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json', // ✅ penting
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                },
+                                body: JSON.stringify({ total: this.total })
+                            });
+
+                            const text = await res.text();
+                            console.log('RAW:', text);
+
+                            let data;
+
+                            try {
+                                data = JSON.parse(text);
+                            } catch (err) {
+                                console.error('Bukan JSON:', text);
+                                alert('Server tidak mengembalikan JSON!');
+                                return;
+                            }
+
+                            if (!res.ok) {
+                                throw new Error(data.error || 'Gagal generate QR');
+                            }
+
+                            this.qrImage =
+                                'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='
+                                + data.qr_string;
+
+                        } catch (e) {
+                            console.error(e);
+                            alert(e.message || 'Terjadi error');
+                        } finally {
+                            this.isLoadingQR = false;
+                        }
                     },
                 }));
             });

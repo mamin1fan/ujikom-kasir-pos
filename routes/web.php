@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\LaporanPembelianController as AdminLaporanPembeli
 use App\Http\Controllers\Admin\LaporanStokController as AdminLaporanStokController;
 
 use App\Http\Controllers\Kasir\DashboardController as KasirDashboardController;
+use App\Http\Controllers\Kasir\QrisController as KasirQrisController;
 
 
 
@@ -152,6 +153,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::middleware(['auth', 'role:kasir'])->group(function () {
     Route::prefix('kasir')->name('kasir.')->group(function () {
         Route::get('/', [KasirDashboardController::class, 'index'])->name('dashboard');
+
+        // Qris Dinamis
+        Route::post('/qris/generate', [KasirQrisController::class, 'generate']);
+        Route::post('/qris/callback', [KasirQrisController::class, 'callback'])->name('qris.callback');
     });
 });
 

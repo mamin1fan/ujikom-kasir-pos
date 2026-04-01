@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Barang;
 use App\Models\Pelanggan;
+use App\Models\KelompokPelanggan;
 
 class DashboardController extends Controller
 {
@@ -20,11 +21,11 @@ class DashboardController extends Controller
             ->where('is_delete', 0)
             ->where('is_active', 1)
             ->get();
-            
 
-        $pelanggan = Pelanggan::where('is_delete', 0)->get();
-        
-        return view('role.kasir.transaksi', compact('barang', 'pelanggan'));
+        $kelompok = KelompokPelanggan::all();
+        $pelanggan = Pelanggan::with('kelompok')->where('is_delete', 0)->get();
+
+        return view('role.kasir.transaksi', compact('barang', 'pelanggan', 'kelompok'));
     }
 
     /**
