@@ -20,8 +20,13 @@ use App\Http\Controllers\Admin\LaporanPembelianController as AdminLaporanPembeli
 use App\Http\Controllers\Admin\LaporanStokController as AdminLaporanStokController;
 
 use App\Http\Controllers\Kasir\DashboardController as KasirDashboardController;
+use App\Http\Controllers\Kasir\TransaksiController as KasirTransaksiController;
 use App\Http\Controllers\Kasir\QrisController as KasirQrisController;
-
+use App\Http\Controllers\Kasir\LaporanPenjualanController as KasirLaporanPenjualanController;
+use App\Http\Controllers\Kasir\CetakStrukController as KasirCetakStrukController;
+use App\Http\Controllers\Kasir\LaporanProdukController as KasirLaporanProdukController;
+use App\Http\Controllers\Kasir\LaporanKasirController as KasirLaporanKasirController;
+use App\Http\Controllers\Kasir\RekapHarianController as KasirRekapHarianController;
 
 
 
@@ -154,9 +159,36 @@ Route::middleware(['auth', 'role:kasir'])->group(function () {
     Route::prefix('kasir')->name('kasir.')->group(function () {
         Route::get('/', [KasirDashboardController::class, 'index'])->name('dashboard');
 
+        Route::get('/transaksi', [KasirTransaksiController::class, 'index'])->name('transaksi');
+
         // Qris Dinamis
         Route::post('/qris/generate', [KasirQrisController::class, 'generate']);
         Route::post('/qris/callback', [KasirQrisController::class, 'callback'])->name('qris.callback');
+
+        // Simpan transaksi
+        Route::post('/simpan-transaksi', [KasirTransaksiController::class, 'simpanTransaksi'])->name('simpan-transaksi');
+
+        Route::get('/penjualan', [KasirLaporanPenjualanController::class, 'index'])
+            ->name('penjualan');
+        Route::get('/kasir/penjualan/cetak', [KasirLaporanPenjualanController::class, 'cetak'])
+            ->name('penjualan.cetak');
+
+        Route::get('/cetak-struk', [KasirCetakStrukController::class, 'index'])
+            ->name('cetak-struk');
+        Route::get('/cetak-struk/{id}', [KasirCetakStrukController::class, 'struk']);
+
+
+        Route::get('/laporan/produk', [KasirLaporanProdukController::class, 'laporanProduk'])
+            ->name('laporan.produk');
+
+        Route::get('/laporan/produk/export', [KasirLaporanProdukController::class, 'export'])
+            ->name('laporan.produk.export');
+
+        Route::get('/laporan/kasir', [KasirLaporanKasirController::class, 'laporanKasir'])
+            ->name('laporan.kasir');
+
+        Route::get('/rekap/harian', [KasirRekapHarianController::class, 'rekapHarian'])
+            ->name('rekap.harian');
     });
 });
 

@@ -71,6 +71,11 @@ class Barang extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+    // 🔗 Relasi ke DetailPenjualan
+    public function detailPenjualan()
+    {
+        return $this->hasMany(DetailPenjualan::class, 'id_barang', 'id_barang');
+    }
 }
 
 

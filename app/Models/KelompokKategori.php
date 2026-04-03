@@ -12,6 +12,12 @@ class KelompokKategori extends Model
     protected $table = 'tb_kelompok_kategori';
     protected $primaryKey = 'id_kelompok';
 
+    public $timestamps = false;
+
+    protected $casts = [
+        'created_at' => 'datetime',
+    ];
+
 
 
     protected $fillable = [

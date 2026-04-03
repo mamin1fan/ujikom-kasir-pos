@@ -15,6 +15,7 @@ class DetailPenjualanSeeder extends Seeder
 
         DB::table('tb_detail_penjualan')->insert([
             [
+                'id_detail_penjualan'   => 1,
                 'id_penjualan'   => 1,
                 'id_barang'      => 1,
                 'jumlah_barang'  => 5,

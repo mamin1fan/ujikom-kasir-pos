@@ -3,6 +3,59 @@
     File : resources/views/kasir/index.blade.php
     Layout: resources/views/layouts/kasir.blade.php
     --}}
+    @push('styles')
+        <style>
+            @media print {
+                body * {
+                    visibility: hidden;
+                }
+
+                #print-area,
+                #print-area * {
+                    visibility: visible;
+                }
+
+                #print-area {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                }
+            }
+
+            .struk {
+                width: 250px;
+                font-family: monospace;
+                font-size: 12px;
+            }
+
+            .struk h2 {
+                text-align: center;
+                margin: 0;
+            }
+
+            .struk hr {
+                border-top: 1px dashed #000;
+                margin: 6px 0;
+            }
+
+            .item {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 4px;
+            }
+
+            .total {
+                display: flex;
+                justify-content: space-between;
+                font-weight: bold;
+            }
+
+            .center {
+                text-align: center;
+            }
+        </style>
+    @endpush
 
     <div class="flex h-screen overflow-hidden bg-slate-100" x-data="pos()">
 
@@ -15,7 +68,7 @@
             <header class="shrink-0 flex items-center justify-between px-5 h-[60px] bg-white border-b border-slate-200">
 
                 <div class="flex items-center gap-3">
-                    <a href="{{ route('dashboard') }}"
+                    <a href="{{ route('kasir.dashboard') }}"
                         class="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 transition text-slate-500">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -165,6 +218,8 @@
                         class="flex-1 py-2 rounded-lg border text-xs font-semibold transition">
                         Pelanggan Khusus
                     </button>
+
+
 
                 </div>
 
@@ -404,25 +459,6 @@
                         {{-- PANEL NON TUNAI --}}
                         {{-- ===================== --}}
                         <div class="w-full shrink-0 px-5 py-4 space-y-3 border-b">
-
-
-                            <div x-show="metodePembayaran === 'qris'" class="text-center">
-
-                                <template x-if="isLoadingQR">
-                                    <p class="text-xs text-slate-400">Membuat QR...</p>
-                                </template>
-
-                                <template x-if="!isLoadingQR && qrImage">
-                                    <div>
-                                        <img :src="qrImage" class="w-48 mx-auto">
-                                        <p class="text-xs mt-2 text-slate-500">
-                                            Scan untuk bayar
-                                        </p>
-                                    </div>
-                                </template>
-
-                            </div>
-
                             <label class="text-[10px] font-bold uppercase text-slate-400">Metode</label>
 
                             <div class="grid grid-cols-2 gap-2">
@@ -483,15 +519,19 @@
                     </div>
                     <div class="flex justify-between text-xs">
                         <span class="text-slate-500">Total</span>
-                        <span class="font-bold text-slate-800" x-text="'Rp ' + fmt(total)"></span>
+                        <span x-text="'Rp ' + fmt(hasilTransaksi?.total || 0)"></span>
+
+
+
+
                     </div>
                     <div class="flex justify-between text-xs" x-show="jenis === 'tunai'">
                         <span class="text-slate-500">Dibayar</span>
-                        <span class="font-bold text-slate-800" x-text="'Rp ' + fmt(bayar)"></span>
+                        <span x-text="'Rp ' + fmt(hasilTransaksi?.bayar || 0)"></span>
                     </div>
                     <div class="flex justify-between text-xs border-t border-slate-200 pt-2" x-show="jenis === 'tunai'">
                         <span class="text-green-600 font-semibold">Kembalian</span>
-                        <span class="font-black text-green-600" x-text="'Rp ' + fmt(kembalian)"></span>
+                        <span x-text="'Rp ' + fmt(hasilTransaksi?.kembalian || 0)"></span>
                     </div>
                 </div>
 
@@ -518,6 +558,141 @@
             </div>
         </flux:modal>
 
+        {{-- MODAL PELANGGAN --}}
+        <div x-show="openModalPelanggan" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+            x-transition
+            x-cloak>
+
+            <div class="bg-white w-[90%] max-w-4xl rounded-2xl shadow-xl p-5">
+
+                {{-- HEADER --}}
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold text-slate-700">Pilih Pelanggan</h2>
+                    <button @click="openModalPelanggan = false"
+                        class="text-slate-400 hover:text-red-500 text-xl">&times;</button>
+                </div>
+
+                {{-- SEARCH --}}
+                <input type="text" x-model="searchPelanggan" placeholder="Cari nama siswa..."
+                    class="w-full mb-3 px-3 py-2 border rounded-lg text-sm focus:ring focus:ring-blue-200">
+
+                {{-- FILTER KELOMPOK (DINAMIS) --}}
+                <div class="flex gap-2 overflow-x-auto mb-3">
+
+                    <button @click="filterKelompok = ''" :class="filterKelompok === ''
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-slate-100 text-slate-500'" class="px-3 py-1 rounded-full text-xs font-semibold">
+                        Semua
+                    </button>
+
+                    @php
+                        $kelompokDipakai = collect($pelanggan)->pluck('id_kelompok_pelanggan')->unique();
+                    @endphp
+
+                    @foreach($kelompok as $k)
+                        @if($kelompokDipakai->contains($k->id_kelompok_pelanggan))
+                            <button @click="filterKelompok = '{{ (string) $k->id_kelompok_pelanggan }}'" :class="filterKelompok === '{{ (string) $k->id_kelompok_pelanggan }}'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-slate-100 text-slate-500'" class="px-3 py-1 rounded-full text-xs font-semibold">
+                                {{ $k->nama_kelompok }}
+                            </button>
+                        @endif
+                    @endforeach
+
+                </div>
+
+                {{-- LIST PELANGGAN --}}
+                <div class="max-h-[350px] overflow-y-auto grid grid-cols-2 md:grid-cols-3 gap-2">
+
+                    @foreach($pelanggan as $p)
+                        <div x-show="(filterKelompok === '' || filterKelompok === '{{ (string) $p->id_kelompok_pelanggan }}')
+                            && ('{{ strtolower($p->nama_pelanggan) }}'.includes(searchPelanggan.toLowerCase()))" @click="
+                            pelanggan = '{{ $p->id_pelanggan }}';
+                            pelangganData = {
+                                nama: '{{ $p->nama_pelanggan }}',
+                                kelompok: '{{ $p->kelompok->nama_kelompok ?? '-' }}'
+                            };
+                            openModalPelanggan = false;
+                        " class="cursor-pointer border rounded-lg px-3 py-2 text-sm hover:bg-blue-50 transition">
+
+                            <div class="font-semibold text-slate-700">
+                                {{ $p->nama_pelanggan }}
+                            </div>
+                            <div class="text-xs text-slate-400">
+                                {{ $p->kelompok->nama_kelompok ?? '-' }}
+                            </div>
+                        </div>
+                    @endforeach
+
+                </div>
+
+            </div>
+        </div>
+
+        <div id="print-area" class="hidden">
+            <div class="struk">
+
+                <h2>TOKO KAMU</h2>
+                <p class="center">Jl. Contoh No.123</p>
+                <p class="center">Telp: 08123456789</p>
+
+                <hr>
+
+                <p>No: <span x-text="noTransaksi"></span></p>
+                <p x-text="new Date().toLocaleString('id-ID')"></p>
+
+                <hr>
+
+                <!-- ITEM -->
+                <template x-for="item in hasilTransaksiItems">
+                    <div>
+                        <div class="item">
+                            <span x-text="item.nama"></span>
+                            <span x-text="fmt(item.qty * item.harga)"></span>
+                        </div>
+                        <div class="item text-xs">
+                            <span x-text="item.qty + ' x ' + fmt(item.harga)"></span>
+                        </div>
+                    </div>
+                </template>
+
+                <hr>
+
+                <!-- TOTAL -->
+                <div class="total">
+                    <span>Subtotal</span>
+                    <span x-text="fmt(subtotal)"></span>
+                </div>
+
+                <div class="total" x-show="diskon > 0">
+                    <span>Diskon</span>
+                    <span x-text="diskon + '%'"></span>
+                </div>
+
+                <div class="total">
+                    <span><b>TOTAL</b></span>
+                    <span><b x-text="fmt(hasilTransaksi?.total || 0)"></b></span>
+                </div>
+
+                <div class="total" x-show="jenis === 'tunai'">
+                    <span>Bayar</span>
+                    <span x-text="fmt(hasilTransaksi?.bayar || 0)"></span>
+                </div>
+
+                <div class="total" x-show="jenis === 'tunai'">
+                    <span>Kembali</span>
+                    <span x-text="fmt(hasilTransaksi?.kembalian || 0)"></span>
+                </div>
+
+                <hr>
+
+                <p class="center">*** TERIMA KASIH ***</p>
+                <p class="center">Barang yang sudah dibeli</p>
+                <p class="center">tidak dapat dikembalikan</p>
+
+            </div>
+        </div>
+
     </div>
 
     @push('scripts')
@@ -529,6 +704,8 @@
 
             document.addEventListener('alpine:init', () => {
                 Alpine.data('pos', () => ({
+                    hasilTransaksi: null,
+                    hasilTransaksiItems: [],
 
                     qrImage: '',
                     isLoadingQR: false,
@@ -563,6 +740,7 @@
                         id: p.id_barang,
                         nama: p.nama,
                         harga: p.harga_jual,
+                        harga_beli: p.harga_beli,
                         stok: p.stok,
                         kategori: (p.kategori?.nama || 'Umum').trim().toLowerCase(),
                         kategori_label: p.kategori?.nama || 'Umum',
@@ -646,51 +824,92 @@
                         this.bayar = 0;
                         this.metodePembayaran = j === 'tunai' ? 'cash' : 'qris';
 
-                        if (j === 'nontunai') {
-                            this.generateQR();
-                        }
-                    },
 
-                    // FIX: prosesBayar() — fungsi yang sebelumnya tidak ada (hanya ada proses())
+                    },
                     prosesBayar() {
                         if (!this.bisaBayar) return;
-                        this.openModalBayar = false;
-                        Flux.modal('sukses-modal').show();
-                    },
 
+                        this.openModalBayar = false;
+
+                        fetch('{{ route("kasir.simpan-transaksi") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify(this.payloadTransaksi())
+                        })
+                            .then(res => res.json())
+                            .then(res => {
+                                if (res.success) {
+
+                                    // ✅ simpan dulu hasil transaksi
+                                    this.hasilTransaksi = {
+                                        total: this.total,
+                                        bayar: this.bayar,
+                                        kembalian: this.kembalian
+                                    };
+
+                                    this.hasilTransaksiItems = JSON.parse(JSON.stringify(this.keranjang));
+
+                                    // tampilkan modal sukses
+                                    Flux.modal('sukses-modal').show();
+
+                                    // ❗ reset setelah sedikit delay (biar modal kebaca)
+                                    setTimeout(() => {
+                                        this.keranjang = [];
+                                        this.subtotal = 0;
+                                        this.total = 0;
+                                        this.diskon = 0;
+                                        this.bayar = 0;
+                                        this.kembalian = 0;
+                                        this.bisaBayar = false;
+                                    }, 300);
+
+                                } else {
+                                    alert(res.message || 'Terjadi kesalahan!');
+                                }
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                alert('Gagal menyimpan transaksi!');
+                            });
+                    },
                     payloadTransaksi() {
                         return {
-                            no_transaksi: this.noTransaksi,
-                            pelanggan: this.pelanggan || 'Walk-in Customer',
-                            items: this.keranjang.map(i => ({
-                                id_barang: i.id,
+                            keranjang: this.keranjang.map(i => ({
+                                id: i.id,
                                 qty: i.qty,
                                 harga: i.harga,
-                                subtotal: i.harga * i.qty,
+                                harga_beli: i.harga_beli, // tambahkan baris ini
                             })),
+
                             subtotal: this.subtotal,
-                            diskon_persen: this.diskon,
-                            diskon_nilai: Math.round(this.subtotal * this.diskon / 100),
+                            diskon: this.diskon,
                             total: this.total,
+
                             jenis: this.jenis,
                             metode: this.jenis === 'tunai' ? 'cash' : this.metodePembayaran,
+
                             bayar: this.jenis === 'tunai' ? this.bayar : this.total,
                             kembalian: this.jenis === 'tunai' ? this.kembalian : 0,
-                            no_referensi: this.noRef || null,
+
+                            no_ref: this.noRef || null,
+                            pelanggan_id: this.pelangganData ? this.pelangganData.id : null,
                         };
                     },
                     reset() {
-                        this.keranjang = [];
-                        this.pelanggan = '';
-                        this.bayar = 0;
-                        this.diskon = 0;
-                        this.noRef = '';
-                        this.jenis = 'tunai';
-                        this.metodePembayaran = 'cash';
-                        this.noTransaksi = this.generateNo();
+                        location.reload()
                     },
                     cetakStruk() {
+                        const area = document.getElementById('print-area');
+                        area.classList.remove('hidden');
+
                         window.print();
+
+                        setTimeout(() => {
+                            area.classList.add('hidden');
+                        }, 500);
                     },
 
                     // ── Helpers ──
@@ -709,49 +928,6 @@
                             + String(d.getMonth() + 1).padStart(2, '0')
                             + String(d.getDate()).padStart(2, '0')
                             + '-' + String(Math.floor(Math.random() * 9999)).padStart(4, '0');
-                    },
-                    async generateQR() {
-                        try {
-                            this.isLoadingQR = true;
-
-                            const res = await fetch('/kasir/qris/generate', {
-                                method: 'POST',
-                                credentials: 'same-origin',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Accept': 'application/json', // ✅ penting
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                                },
-                                body: JSON.stringify({ total: this.total })
-                            });
-
-                            const text = await res.text();
-                            console.log('RAW:', text);
-
-                            let data;
-
-                            try {
-                                data = JSON.parse(text);
-                            } catch (err) {
-                                console.error('Bukan JSON:', text);
-                                alert('Server tidak mengembalikan JSON!');
-                                return;
-                            }
-
-                            if (!res.ok) {
-                                throw new Error(data.error || 'Gagal generate QR');
-                            }
-
-                            this.qrImage =
-                                'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='
-                                + data.qr_string;
-
-                        } catch (e) {
-                            console.error(e);
-                            alert(e.message || 'Terjadi error');
-                        } finally {
-                            this.isLoadingQR = false;
-                        }
                     },
                 }));
             });
