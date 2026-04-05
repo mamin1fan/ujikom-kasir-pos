@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <a href="{{ route('admin.transaksi-pembelian.index') }}"
+                <a href="{{ route('admin.transaksi.pembelian.index') }}"
                     class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition">
                     <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
@@ -202,7 +202,7 @@
 
     <div class="py-8 pb">
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-            <form action="{{ route('admin.transaksi-pembelian.store') }}" method="POST" id="formPembelian">
+            <form action="{{ route('admin.transaksi.pembelian.store') }}" method="POST" id="formPembelian">
                 @csrf
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -306,7 +306,7 @@
                                 </div>
 
                                 <div class="flex gap-3">
-                                    <a href="{{ route('admin.transaksi-pembelian.index') }}"
+                                    <a href="{{ route('admin.transaksi.pembelian.index') }}"
                                         class="px-6 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 border border-gray-200 rounded-xl">
                                         Batal
                                     </a>

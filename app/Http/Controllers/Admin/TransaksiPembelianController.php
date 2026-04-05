@@ -17,7 +17,7 @@ class TransaksiPembelianController extends Controller
     // ===================== INDEX =====================
     public function index()
     {
-        $idSekolah = auth()->user()->id_sekolah;
+        $idSekolah = session('id_sekolah');
 
         $supplier = Supplier::where('id_sekolah', $idSekolah)->get();
 
@@ -111,7 +111,7 @@ class TransaksiPembelianController extends Controller
             \Log::info("SUKSES - Pembelian ID {$pembelian->id_pembelian} berhasil disimpan dengan {$inserted} detail");
 
             return redirect()
-                ->route('admin.transaksi-pembelian.index')
+                ->route('admin.transaksi.pembelian.index')
                 ->with('success', "Pembelian berhasil disimpan ({$inserted} barang)");
 
         } catch (\Exception $e) {
@@ -147,7 +147,7 @@ class TransaksiPembelianController extends Controller
         ]);
 
         return redirect()
-            ->route('admin.transaksi-pembelian.index')
+            ->route('admin.transaksi.pembelian.index')
             ->with('success', 'Pembelian berhasil diupdate');
     }
 

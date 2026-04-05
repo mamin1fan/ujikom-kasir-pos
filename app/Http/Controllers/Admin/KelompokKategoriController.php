@@ -45,7 +45,7 @@ class KelompokKategoriController extends Controller
         ]);
 
         return redirect()
-            ->route('admin.kelompok-kategori.index')
+            ->route('admin.kelompok.kategori.index')
             ->with('success', 'Data berhasil ditambahkan');
     }
 
@@ -64,7 +64,7 @@ class KelompokKategoriController extends Controller
         ]);
 
         return redirect()
-            ->route('admin.kelompok-kategori.index')
+            ->route('admin.kelompok.kategori.index')
             ->with('success', 'Data berhasil diupdate');
     }
 

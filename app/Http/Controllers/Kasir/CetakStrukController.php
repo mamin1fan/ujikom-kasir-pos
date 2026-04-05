@@ -79,7 +79,7 @@ class CetakStrukController extends Controller
 
     /**
      * Endpoint AJAX untuk preview & cetak struk
-     * GET /kasir/cetak-struk/{id}
+     * GET /kasir/cetak.struk/{id}
      */
     public function struk($id)
     {

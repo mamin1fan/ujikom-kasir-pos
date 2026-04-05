@@ -389,7 +389,7 @@
                     this.hasError = false
 
                     try {
-                        const res = await fetch(`/kasir/cetak-struk/${id}`)
+                        const res = await fetch(`/kasir/cetak.struk/${id}`)
 
                         if (!res.ok) throw new Error(`HTTP ${res.status}`)
 

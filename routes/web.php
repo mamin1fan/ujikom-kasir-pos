@@ -64,47 +64,67 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Operasional (jika dibutuhkan semua role)
-    Route::get('/operasional/dashboard', [SuperAdminMonitoringController::class, 'dashboard'])
-        ->name('panel.operasional');
+
 
 });
 
 // ====================== SUPER ADMIN ======================
-Route::middleware(['auth', 'role:super admin'])->prefix('super-admin')->name('super-admin.')->group(function () {
+Route::middleware(['auth', 'role:super admin'])->group(function () {
+    // impersonate mode
+    // Operasional
+    Route::get('/operasional/dashboard', [SuperAdminMonitoringController::class, 'dashboard'])
+        ->name('panel.operasional');
 
-    Route::get('/', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
+    Route::prefix('super-admin')->name('super-admin.')->group(function () {
 
-    // Barang
-    Route::resource('barang', SuperAdminBarangController::class)->except(['show', 'create', 'edit']);
+        Route::get('/', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
 
-    // Sekolah
-    Route::resource('sekolah', SuperAdminSekolahController::class)->except(['show', 'create', 'edit']);
-    Route::put('sekolah/{id}/status', [SuperAdminSekolahController::class, 'toggleStatus'])->name('sekolah.status');
+        // Barang
+        Route::resource('barang', SuperAdminBarangController::class)->except(['show', 'create', 'edit']);
 
-    // User
-    Route::get('user', [SuperAdminUserController::class, 'index'])->name('user.index');
-    Route::post('user', [SuperAdminUserController::class, 'store'])->name('user.store');
-    Route::put('user/{id}', [SuperAdminUserController::class, 'update'])->name('user.update');
-    Route::put('user/{id}/activate', [SuperAdminUserController::class, 'activate'])->name('user.activate');
+        // Sekolah
+        Route::resource('sekolah', SuperAdminSekolahController::class)->except(['show', 'create', 'edit']);
+        Route::put('sekolah/{id}/status', [SuperAdminSekolahController::class, 'toggleStatus'])->name('sekolah.status');
 
-    // Pantau / Monitoring
-    Route::get('/pantau/{id}', [SuperAdminMonitoringController::class, 'pantau'])->name('pantau');
+        // User
+        Route::get('user', [SuperAdminUserController::class, 'index'])->name('user.index');
+        Route::post('user', [SuperAdminUserController::class, 'store'])->name('user.store');
+        Route::put('user/{id}', [SuperAdminUserController::class, 'update'])->name('user.update');
+        Route::put('user/{id}/activate', [SuperAdminUserController::class, 'activate'])->name('user.activate');
 
-    // Restore (Soft Delete)
-    Route::prefix('restore')->name('restore.')->group(function () {
-        Route::get('/{type}', [SuperAdminRestoreController::class, 'index'])->name('index');
-        Route::post('/{type}/{id}', [SuperAdminRestoreController::class, 'restore'])->name('restore');
-        Route::delete('/{type}/{id}', [SuperAdminRestoreController::class, 'forceDelete'])->name('forceDelete');
+        // Pantau / Monitoring
+        Route::get('/pantau/{id}', [SuperAdminMonitoringController::class, 'pantau'])->name('pantau');
+
+        // Restore (Soft Delete)
+        Route::prefix('restore')->name('restore.')->group(function () {
+
+            // Route untuk tiap tipe
+            Route::get('/barang', [SuperAdminRestoreController::class, 'index'])->name('barang')->defaults('type', 'barang');
+            Route::get('/kategori', [SuperAdminRestoreController::class, 'index'])->name('kategori')->defaults('type', 'kategori');
+            Route::get('/pelanggan', [SuperAdminRestoreController::class, 'index'])->name('pelanggan')->defaults('type', 'pelanggan');
+            Route::get('/pembelian', [SuperAdminRestoreController::class, 'index'])->name('pembelian')->defaults('type', 'pembelian');
+            Route::get('/penjualan', [SuperAdminRestoreController::class, 'index'])->name('penjualan')->defaults('type', 'penjualan');
+            Route::get('/supplier', [SuperAdminRestoreController::class, 'index'])->name('supplier')->defaults('type', 'supplier');
+
+        });
+        Route::prefix('restore')->name('restore.')->group(function () {
+            Route::get('/{type}', [SuperAdminRestoreController::class, 'index'])->name('index');
+            Route::post('/{type}/{id}', [SuperAdminRestoreController::class, 'restore'])->name('restore');
+            Route::delete('/{type}/{id}', [SuperAdminRestoreController::class, 'forceDelete'])->name('forceDelete');
+        });
+
+        // Keluar dari Impersonate Mode
+        Route::get('/keluar-mode', function () {
+            session()->forget([
+                'mode',
+                'impersonate',
+                'impersonator_role',
+                'id_sekolah',
+                'nama_sekolah'
+            ]);
+            return redirect()->route('super-admin.dashboard');
+        })->name('keluar-mode');
     });
-
-    // Keluar dari Impersonate Mode
-    Route::get('/keluar-mode', function () {
-        session()->forget([
-            'mode', 'impersonate', 'impersonator_role', 'id_sekolah', 'nama_sekolah'
-        ]);
-        return redirect()->route('super-admin.dashboard');
-    })->name('keluar-mode');
 });
 
 // ====================== ADMIN ======================
@@ -115,20 +135,26 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Resource Routes (lebih bersih)
     Route::resource('barang', AdminBarangController::class);
     Route::resource('kategori', AdminKategoriController::class);
-    Route::resource('kelompok-kategori', AdminKelompokKategoriController::class);
+    Route::prefix('kelompok')->name('kelompok.')->group(function () {
+        Route::resource('kategori', AdminKelompokKategoriController::class);
+    });
     Route::resource('pelanggan', AdminPelangganController::class);
-    Route::resource('kelompok-pelanggan', AdminKelompokPelangganController::class);
+    Route::prefix('kelompok')->name('kelompok.')->group(function () {
+        Route::resource('pelanggan', AdminKelompokPelangganController::class);
+    });
     Route::resource('supplier', AdminSupplierController::class);
     Route::resource('user', AdminUserController::class);
-    Route::resource('transaksi-pembelian', AdminTransaksiPembelianController::class);
+    Route::prefix('transaksi')->name('transaksi.')->group(function () {
+        Route::resource('pembelian', AdminTransaksiPembelianController::class);
+    });
 
     // Laporan
-    Route::get('laporan-pembelian', [AdminLaporanPembelianController::class, 'index'])->name('laporan-pembelian');
-    Route::get('laporan-pembelian/cetak', [AdminLaporanPembelianController::class, 'cetak'])->name('laporan-pembelian.cetak');
+    Route::get('laporan/pembelian', [AdminLaporanPembelianController::class, 'index'])->name('laporan.pembelian');
+    Route::get('laporan/pembelian/cetak', [AdminLaporanPembelianController::class, 'cetak'])->name('laporan.pembelian.cetak');
 
-    Route::get('laporan-stok', [AdminLaporanStokController::class, 'stok'])->name('laporan.stok');
-    Route::get('laporan-stok/excel', [AdminLaporanStokController::class, 'exportExcel'])->name('laporan.stok.excel');
-    Route::get('laporan-stok/pdf', [AdminLaporanStokController::class, 'exportPdf'])->name('laporan.stok.pdf');
+    Route::get('laporan/stok', [AdminLaporanStokController::class, 'stok'])->name('laporan.stok');
+    Route::get('laporan/stok/excel', [AdminLaporanStokController::class, 'exportExcel'])->name('laporan.stok.excel');
+    Route::get('laporan/stok/pdf', [AdminLaporanStokController::class, 'exportPdf'])->name('laporan.stok.pdf');
 
     // Menu Kasir yang diakses Admin
     Route::get('laporan/produk', [KasirLaporanProdukController::class, 'laporanProduk'])->name('laporan.produk');
@@ -141,7 +167,7 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
     Route::get('/', [KasirDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/transaksi', [KasirTransaksiController::class, 'index'])->name('transaksi');
-    Route::post('/simpan-transaksi', [KasirTransaksiController::class, 'simpanTransaksi'])->name('simpan-transaksi');
+    Route::post('/simpan/transaksi', [KasirTransaksiController::class, 'simpanTransaksi'])->name('simpan.transaksi');
 
     // QRIS
     Route::post('/qris/generate', [KasirQrisController::class, 'generate']);
@@ -151,8 +177,8 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
     Route::get('/penjualan', [KasirLaporanPenjualanController::class, 'index'])->name('penjualan');
     Route::get('/penjualan/cetak', [KasirLaporanPenjualanController::class, 'cetak'])->name('penjualan.cetak');
 
-    Route::get('/cetak-struk', [KasirCetakStrukController::class, 'index'])->name('cetak-struk');
-    Route::get('/cetak-struk/{id}', [KasirCetakStrukController::class, 'struk']);
+    Route::get('/cetak.struk', [KasirCetakStrukController::class, 'index'])->name('cetak.struk');
+    Route::get('/cetak.struk/{id}', [KasirCetakStrukController::class, 'struk']);
 
     Route::get('/laporan/produk', [KasirLaporanProdukController::class, 'laporanProduk'])->name('laporan.produk');
     Route::get('/laporan/produk/export', [KasirLaporanProdukController::class, 'export'])->name('laporan.produk.export');

@@ -831,7 +831,7 @@
 
                         this.openModalBayar = false;
 
-                        fetch('{{ route("kasir.simpan-transaksi") }}', {
+                        fetch('{{ route("kasir.simpan.transaksi") }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

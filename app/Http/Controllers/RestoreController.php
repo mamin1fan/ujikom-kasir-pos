@@ -46,7 +46,10 @@ class RestoreController extends Controller
         $keyName = $columns['key'];
         $displayName = $columns['name'];
 
-        $data = $model::onlyTrashed()->latest()->paginate(10);
+        $data = $model::onlyTrashed()
+            ->where('id_sekolah', session('id_sekolah'))
+            ->latest()
+            ->paginate(10);
 
         return view('role.super-admin.restore', compact('data', 'type', 'keyName', 'displayName'));
     }
@@ -56,7 +59,9 @@ class RestoreController extends Controller
     {
         $model = $this->getModel($type);
 
-        $item = $model::onlyTrashed()->findOrFail($id);
+        $item = $model::onlyTrashed()
+            ->where('id_sekolah', session('id_sekolah'))
+            ->findOrFail($id);
 
         // Restore data
         $item->restore();
@@ -73,7 +78,9 @@ class RestoreController extends Controller
     {
         $model = $this->getModel($type);
 
-        $item = $model::onlyTrashed()->findOrFail($id);
+        $item = $model::onlyTrashed()
+            ->where('id_sekolah', session('id_sekolah'))
+            ->findOrFail($id);
         $item->forceDelete();
 
         return back()->with('success', 'Data dihapus permanen');

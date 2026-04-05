@@ -46,7 +46,7 @@ class KelompokPelangganController extends Controller
         ]);
 
         return redirect()
-            ->route('admin.kelompok-pelanggan.index')
+            ->route('admin.kelompok.pelanggan.index')
             ->with('success', 'Kelompok pelanggan berhasil ditambahkan');
     }
 
@@ -71,7 +71,7 @@ class KelompokPelangganController extends Controller
         ]);
 
         return redirect()
-            ->route('admin.kelompok-pelanggan.index')
+            ->route('admin.kelompok.pelanggan.index')
             ->with('success', 'Kelompok pelanggan berhasil diperbarui');
     }
 

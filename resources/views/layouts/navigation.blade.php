@@ -50,9 +50,9 @@
                         </span>
                     </div>
                     <p class="font-semibold text-sm text-emerald-900 dark:text-emerald-100 leading-snug">
-                        {{ session('sekolah_nama', 'Nama Sekolah') }}
+                        {{ session('nama_sekolah', 'Nama Sekolah') }}
                     </p>
-                    <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">{{ session('sekolah_kota', '-') }}</p>
+                    <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">{{ session('kode_sekolah', '-') }}</p>
                 </div>
 
                 @if ($role === 'kasir')
@@ -60,10 +60,9 @@
                     {{-- ── Kasir (mode operasional) ── --}}
                     @php
                         $kasirOpMenu = [
-
-                            ['route' => 'kasir.penjualan', 'label' => 'Laporan Penjualan', 'match' => 'kasir.penjualan*', 'icon' => 'M6 9V2h12v7M6 18h12v4H6zM6 14h12a2 2 0 002-2V9H4v3a2 2 0 002 2z'],
+                            ['route' => 'kasir.penjualan', 'params' => ['mode' => 'today'], 'label' => 'Laporan Penjualan', 'match' => 'kasir.penjualan*', 'icon' => 'M6 9V2h12v7M6 18h12v4H6zM6 14h12a2 2 0 002-2V9H4v3a2 2 0 002 2z'],
                             ['route' => 'kasir.rekap.harian', 'label' => 'Rekap Harian', 'match' => 'kasir.rekap.harian*', 'icon' => 'M16 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V8z'],
-                            ['route' => 'kasir.cetak-struk', 'label' => 'Cetak Struk', 'match' => 'kasir.cetak-struk*', 'icon' => 'M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z'],
+                            ['route' => 'kasir.cetak.struk', 'label' => 'Cetak Struk', 'match' => 'kasir.cetak.struk*', 'icon' => 'M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z'],
                         ];
                     @endphp
                     <x-nav-section label="Kasir" :items="$kasirOpMenu" />
@@ -72,13 +71,18 @@
 
                     {{-- ── Admin / Super Admin (mode operasional) ── --}}
                     @php
+                        $dashboard = [
+                            ['route' => 'panel.operasional', 'label' => 'Dashboard MODE : Sekolah (Operasional)', 'match' => 'panel.operasional', 'icon' => 'M3 3h7v7H3V3zm11 0h7v7h-7V3zM3 14h7v7H3v-7zm11 0h7v7h-7v-7z'],
+                        ];
                         $opInventaris = [
-                            ['route' => 'admin.barang.index', 'label' => 'Data Barang', 'match' => 'admin.barang.*', 'icon' => 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10'],
-                            ['route' => 'admin.transaksi-pembelian.index', 'label' => 'Restok Barang', 'match' => 'admin.transaksi-pembelian.*', 'icon' => 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z'],
+                        ['route' => 'kasir.penjualan', 'params' => ['mode' => 'today'], 'label' => 'Laporan Penjualan', 'match' => 'kasir.penjualan*', 'icon' => 'M6 9V2h12v7M6 18h12v4H6zM6 14h12a2 2 0 002-2V9H4v3a2 2 0 002 2z'],
+                        ['route' => 'admin.barang.index', 'label' => 'Daftar Barang', 'match' => 'admin.barang.*', 'icon' => 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10'],
+                            ['route' => 'admin.laporan.produk', 'label' => 'Analisis Barang', 'match' => 'admin.laporan.produk.*', 'icon' => 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'],
+                            ['route' => 'admin.laporan.pembelian', 'label' => 'Laporan Pembelian', 'match' => 'admin.laporan.pembelian.*', 'icon' => 'M9 17v-6h6v6M9 11V9m6 2V7'],
+                            ['route' => 'admin.transaksi.pembelian.index', 'label' => 'Restok Barang', 'match' => 'admin.transaksi.pembelian.*', 'icon' => 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z'],
                         ];
 
                         $opUtilitas = [
-                            ['route' => 'panel.operasional', 'label' => 'Dashboard', 'match' => 'panel.operasional', 'icon' => 'M3 3h7v7H3V3zm11 0h7v7h-7V3zM3 14h7v7H3v-7zm11 0h7v7h-7v-7z'],
                             [
                                 'route' => 'super-admin.restore.index',
                                 'params' => ['type' => 'barang'],
@@ -89,6 +93,9 @@
                         ];
                     @endphp
 
+                    <x-nav-section label="Dashboard" :items="$dashboard" />
+
+                    <div class="h-px bg-gray-100 dark:bg-gray-800 mx-1 my-2"></div>
                     <x-nav-section label="Inventaris" :items="$opInventaris" />
 
                     <div class="h-px bg-gray-100 dark:bg-gray-800 mx-1 my-2"></div>
@@ -110,10 +117,10 @@
                         ];
 
                         $kasirLaporanMenu = [
-                            ['route' => 'kasir.penjualan', 'label' => 'Laporan Penjualan', 'match' => 'kasir.penjualan*', 'icon' => 'M6 9V2h12v7M6 18h12v4H6zM6 14h12a2 2 0 002-2V9H4v3a2 2 0 002 2z'],
+                            ['route' => 'kasir.penjualan', 'params' => ['mode' => 'today'], 'label' => 'Laporan Penjualan', 'match' => 'kasir.penjualan*', 'icon' => 'M6 9V2h12v7M6 18h12v4H6zM6 14h12a2 2 0 002-2V9H4v3a2 2 0 002 2z'],
                             ['route' => 'kasir.laporan.produk', 'label' => 'Analisis Produk', 'match' => 'kasir.laporan.produk*', 'icon' => 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'],
                             ['route' => 'kasir.rekap.harian', 'label' => 'Rekap Harian', 'match' => 'kasir.rekap.harian*', 'icon' => 'M16 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V8z'],
-                            ['route' => 'kasir.cetak-struk', 'label' => 'Cetak Struk', 'match' => 'kasir.cetak-struk*', 'icon' => 'M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z'],
+                            ['route' => 'kasir.cetak.struk', 'label' => 'Cetak Struk', 'match' => 'kasir.cetak.struk*', 'icon' => 'M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z'],
                         ];
                     @endphp
                     <x-nav-section label="Dashboard" :items="$dashboardMenu" />
@@ -162,20 +169,20 @@
                         $produkMenu = [
                             ['route' => 'admin.barang.index', 'label' => 'Daftar Barang', 'match' => 'admin.barang.*', 'icon' => 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10'],
                             ['route' => 'admin.kategori.index', 'label' => 'Kategori', 'match' => 'admin.kategori.*', 'icon' => 'M7 7h10M7 12h10M7 17h10'],
-                            ['route' => 'admin.kelompok-kategori.index', 'label' => 'Kelompok Kategori', 'match' => 'admin.kelompok-kategori.*', 'icon' => 'M4 6h16M4 12h8m-8 6h16'],
+                            ['route' => 'admin.kelompok.kategori.index', 'label' => 'Kelompok Kategori', 'match' => 'admin.kelompok.kategori.*', 'icon' => 'M4 6h16M4 12h8m-8 6h16'],
                         ];
                         $pihakMenu = [
                             ['route' => 'admin.supplier.index', 'label' => 'Supplier', 'match' => 'admin.supplier.*', 'icon' => 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10'],
                             ['route' => 'admin.pelanggan.index', 'label' => 'Pelanggan', 'match' => 'admin.pelanggan.*', 'icon' => 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
-                            ['route' => 'admin.kelompok-pelanggan.index', 'label' => 'Kelompok Pelanggan', 'match' => 'admin.kelompok-pelanggan.*', 'icon' => 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197'],
+                            ['route' => 'admin.kelompok.pelanggan.index', 'label' => 'Kelompok Pelanggan', 'match' => 'admin.kelompok.pelanggan.*', 'icon' => 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197'],
                         ];
                         $pembelianMenu = [
-                            ['route' => 'admin.transaksi-pembelian.index', 'label' => 'Restok Barang', 'match' => 'admin.transaksi-pembelian.*', 'icon' => 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z'],
-                            ['route' => 'admin.laporan-pembelian.index', 'label' => 'Laporan Pembelian', 'match' => 'admin.laporan-pembelian.*', 'icon' => 'M9 17v-6h6v6M9 11V9m6 2V7'],
+                            ['route' => 'admin.transaksi.pembelian.index', 'label' => 'Restok Barang', 'match' => 'admin.transaksi.pembelian.*', 'icon' => 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z'],
+                            ['route' => 'admin.laporan.pembelian.index', 'label' => 'Laporan Pembelian', 'match' => 'admin.laporan.pembelian.*', 'icon' => 'M9 17v-6h6v6M9 11V9m6 2V7'],
                         ];
                         $penjualanMenu = [
 
-                            ['route' => 'kasir.penjualan', 'label' => 'Laporan Penjualan', 'match' => 'kasir.penjualan*', 'icon' => 'M6 9V2h12v7M6 18h12v4H6zM6 14h12a2 2 0 002-2V9H4v3a2 2 0 002 2z'],
+                            ['route' => 'kasir.penjualan', 'params' => ['mode' => 'today'], 'label' => 'Laporan Penjualan', 'match' => 'kasir.penjualan*', 'icon' => 'M6 9V2h12v7M6 18h12v4H6zM6 14h12a2 2 0 002-2V9H4v3a2 2 0 002 2z'],
 
                         ];
                         $laporanMenu = [

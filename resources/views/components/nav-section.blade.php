@@ -6,9 +6,9 @@
     @foreach($items as $item)
         @php
             $active = request()->routeIs($item['match']);
-            $href = isset($item['params'])
-                ? route($item['route'], $item['params'])
-                : route($item['route']);
+            $href = ($item['route'] === '#')
+                ? '#'
+                : route($item['route'], $item['params'] ?? []);
             $paths = explode('|', $item['icon']);
         @endphp
         <a href="{{ $href }}"

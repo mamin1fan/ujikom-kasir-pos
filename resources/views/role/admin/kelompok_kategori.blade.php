@@ -126,7 +126,7 @@
 
     {{-- ================= MODAL ADD ================= --}}
     <flux:modal name="add-kelompok" class="md:w-[420px]">
-        <form action="{{ route('admin.kelompok-kategori.store') }}" method="POST">
+        <form action="{{ route('admin.kelompok.kategori.store') }}" method="POST">
             @csrf
             <div class="space-y-4">
                 <flux:heading size="lg">Tambah Kelompok</flux:heading>
@@ -166,8 +166,8 @@
 
         <script>
             const ROUTES = {
-                update: '{{ route('admin.kelompok-kategori.update', ':id') }}',
-                destroy: '{{ route('admin.kelompok-kategori.destroy', ':id') }}'
+                update: '{{ route('admin.kelompok.kategori.update', ':id') }}',
+                destroy: '{{ route('admin.kelompok.kategori.destroy', ':id') }}'
             };
 
             function openEditModal(id, nama) {

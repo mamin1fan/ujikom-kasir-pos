@@ -527,80 +527,40 @@
                 </div>
             </form>
 
-
-
-            @if(request()->hasAny(['from', 'to', 'search', 'status_pembayaran', 'month', 'pelanggan', 'id_pelanggan']))
+            @if(request()->hasAny(['mode','from', 'to', 'search', 'status_pembayaran', 'month', 'pelanggan', 'id_pelanggan']))
                 <div
-                    class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 px-4 py-3 rounded-xl text-sm flex flex-wrap items-center gap-2">
-
+                    class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 px-4 py-3 rounded-xl text-sm flex flex-wrap items-center gap-2">
                     <span class="font-semibold">Menampilkan:</span>
-
-                    {{-- 📅 TANGGAL --}}
                     @if(request('from') && request('to'))
-                        <span class="bg-white/70 dark:bg-slate-800 px-2 py-1 rounded">
-                            📅 {{ \Carbon\Carbon::parse(request('from'))->format('d M Y') }}
-                            -
-                            {{ \Carbon\Carbon::parse(request('to'))->format('d M Y') }}
-                        </span>
+                        <span class="bg-white/70 px-2 py-1 rounded">📅
+                            {{ \Carbon\Carbon::parse(request('from'))->format('d M Y') }} -
+                            {{ \Carbon\Carbon::parse(request('to'))->format('d M Y') }}</span>
                     @endif
-
-                    {{-- 📅 BULAN --}}
                     @if(request('month'))
-                        <span class="bg-white/70 dark:bg-slate-800 px-2 py-1 rounded">
-                            📆 Bulan {{ \Carbon\Carbon::create()->month(request('month'))->translatedFormat('F') }}
-                        </span>
+                        <span class="bg-white/70 px-2 py-1 rounded">📆
+                            {{ \Carbon\Carbon::create()->month(request('month'))->translatedFormat('F Y') }}</span>
                     @endif
-
-                    {{-- 🔍 SEARCH --}}
                     @if(request('search'))
-                        <span class="bg-white/70 dark:bg-slate-800 px-2 py-1 rounded">
-                            🔍 "{{ request('search') }}"
-                        </span>
+                        <span class="bg-white/70 px-2 py-1 rounded">🔍 "{{ request('search') }}"</span>
                     @endif
-
-                    {{-- 💳 STATUS --}}
-                    @if(request('status_pembayaran'))
-                        <span class="bg-white/70 dark:bg-slate-800 px-2 py-1 rounded">
-                            💳 {{ ucfirst(request('status_pembayaran')) }}
-                        </span>
-                    @endif
-
-                    {{-- 👤 TIPE --}}
-                    @if(request('pelanggan') == 'ada')
-                        <span class="bg-white/70 dark:bg-slate-800 px-2 py-1 rounded">
-                            👤 Pelanggan
-                        </span>
-                    @elseif(request('pelanggan') == 'non')
-                        <span class="bg-white/70 dark:bg-slate-800 px-2 py-1 rounded">
-                            👤 Non Pelanggan
-                        </span>
-                    @endif
-
-                    {{-- 👤 NAMA PELANGGAN --}}
                     @if(request('id_pelanggan'))
                         @php
                             $selected = $pelanggan->firstWhere('id_pelanggan', request('id_pelanggan'));
                         @endphp
-
                         @if($selected)
-                            <span class="bg-white/70 dark:bg-slate-800 px-2 py-1 rounded">
-                                🧾 {{ $selected->nama_pelanggan }}
-                            </span>
+                            <span class="bg-white/70 px-2 py-1 rounded">🧾 {{ $selected->nama_pelanggan }}</span>
                         @endif
                     @endif
-                    <div class="flex ms-auto gap-2">
-                        <a href="{{ route('kasir.penjualan.cetak', request()->all()) }}" target="_blank" class="btn-green">
-                            🖨️ Cetak Laporan
-                        </a>
-                    </div>
-                </div>
-            @endif
-            @if(!request()->hasAny(['from', 'to', 'search', 'status_pembayaran', 'month', 'pelanggan', 'id_pelanggan']))
-                <div class="bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 px-4 py-3 rounded-xl text-sm">
-                    📊 Menampilkan semua data hari ini
-                </div>
-                <div class="flex ms-auto gap-2">
-                    <a href="{{ route('kasir.penjualan.cetak', request()->all()) }}" target="_blank" class="btn-green">
+                    @if(request('status_pembayaran'))
+                        <span class="bg-white/70 px-2 py-1 rounded">💳 {{ ucfirst(request('status_pembayaran')) }}</span>
+                    @endif
+                    @if(request('pelanggan') == 'ada')
+                        <span class="bg-white/70 px-2 py-1 rounded">👤 Pelanggan</span>
+                    @elseif(request('pelanggan') == 'non')
+                        <span class="bg-white/70 px-2 py-1 rounded">👤 Non Pelanggan</span>
+                    @endif
+                    <a href="{{ route('kasir.penjualan.cetak', request()->except('page')) }}" target="_blank"
+                        class="ms-auto btn-green">
                         🖨️ Cetak Laporan
                     </a>
                 </div>

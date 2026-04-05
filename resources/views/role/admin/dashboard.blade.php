@@ -143,7 +143,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-700">
                 <h3 class="font-semibold text-gray-800 dark:text-gray-100">Transaksi Terbaru</h3>
-                <a href="{{ route('admin.transaksi-pembelian.index') }}"
+                <a href="{{ route('admin.transaksi.pembelian.index') }}"
                     class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">
                     Lihat semua →
                 </a>

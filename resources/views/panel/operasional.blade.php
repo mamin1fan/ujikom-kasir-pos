@@ -126,9 +126,9 @@
                         $data['menus'] = [
                             ['href' => route('kasir.dashboard'),                   'label' => 'Buka Kasir',    'bg' => 'bg-indigo-50 dark:bg-indigo-950', 'icon_color' => 'text-indigo-600', 'icon' => 'M6 9V2h12v7M6 18h12v4H6zM6 14h12a2 2 0 002-2V9H4v3a2 2 0 002 2z'],
                             ['href' => route('admin.barang.index'),                 'label' => 'Data Barang',   'bg' => 'bg-amber-50 dark:bg-amber-950',   'icon_color' => 'text-amber-600',  'icon' => 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10'],
-                            ['href' => route('admin.transaksi-pembelian.index'),    'label' => 'Pembelian',     'bg' => 'bg-teal-50 dark:bg-teal-950',     'icon_color' => 'text-teal-600',   'icon' => 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 9v1'],
+                            ['href' => route('admin.transaksi.pembelian.index'),    'label' => 'Pembelian',     'bg' => 'bg-teal-50 dark:bg-teal-950',     'icon_color' => 'text-teal-600',   'icon' => 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 9v1'],
                             ['href' => route('kasir.rekap.harian'),                 'label' => 'Rekap Harian',  'bg' => 'bg-green-50 dark:bg-green-950',   'icon_color' => 'text-green-600',  'icon' => 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'],
-                            ['href' => route('kasir.cetak-struk'),                  'label' => 'Cetak Struk',   'bg' => 'bg-blue-50 dark:bg-blue-950',     'icon_color' => 'text-blue-600',   'icon' => 'M6 9V2h12v7M6 18h12v4H6zM6 14h12a2 2 0 002-2V9H4v3a2 2 0 002 2z'],
+                            ['href' => route('kasir.cetak.struk'),                  'label' => 'Cetak Struk',   'bg' => 'bg-blue-50 dark:bg-blue-950',     'icon_color' => 'text-blue-600',   'icon' => 'M6 9V2h12v7M6 18h12v4H6zM6 14h12a2 2 0 002-2V9H4v3a2 2 0 002 2z'],
                             ['href' => route('admin.kategori.index'),               'label' => 'Kategori',      'bg' => 'bg-gray-100 dark:bg-gray-700',    'icon_color' => 'text-gray-500',   'icon' => 'M7 7h10M7 12h10M7 17h10'],
                         ];
                         @endphp

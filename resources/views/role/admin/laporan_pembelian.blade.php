@@ -302,23 +302,23 @@
 
                     {{-- Quick Filter --}}
                     <div class="flex flex-wrap items-center gap-2">
-                        <a href="{{ $manualFilter ? '#' : route('admin.laporan-pembelian', ['mode' => 'today']) }}"
+                        <a href="{{ $manualFilter ? '#' : route('admin.laporan.pembelian', ['mode' => 'today']) }}"
                             class="px-3 py-1.5 rounded-lg text-sm font-semibold {{ request('mode') == 'today' ? 'bg-emerald-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}">
                             Hari Ini
                         </a>
-                        <a href="{{ $manualFilter ? '#' : route('admin.laporan-pembelian', ['mode' => 'yesterday']) }}"
+                        <a href="{{ $manualFilter ? '#' : route('admin.laporan.pembelian', ['mode' => 'yesterday']) }}"
                             class="px-3 py-1.5 rounded-lg text-sm font-semibold {{ request('mode') == 'yesterday' ? 'bg-emerald-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}">
                             Kemarin
                         </a>
-                        <a href="{{ $manualFilter ? '#' : route('admin.laporan-pembelian', ['mode' => '7days']) }}"
+                        <a href="{{ $manualFilter ? '#' : route('admin.laporan.pembelian', ['mode' => '7days']) }}"
                             class="px-3 py-1.5 rounded-lg text-sm font-semibold {{ request('mode') == '7days' ? 'bg-emerald-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}">
                             7 Hari
                         </a>
-                        <a href="{{ $manualFilter ? '#' : route('admin.laporan-pembelian', ['mode' => 'all']) }}"
+                        <a href="{{ $manualFilter ? '#' : route('admin.laporan.pembelian', ['mode' => 'all']) }}"
                             class="px-3 py-1.5 rounded-lg text-sm font-semibold {{ request('mode') == 'all' ? 'bg-emerald-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}">
                             Semua
                         </a>
-                        <a href="{{ route('admin.laporan-pembelian') }}"
+                        <a href="{{ route('admin.laporan.pembelian') }}"
                             class="px-3 py-1.5 ms-auto rounded-lg text-sm font-semibold bg-red-100 text-red-600">
                             Reset
                         </a>
@@ -396,7 +396,7 @@
                         </div>
 
                         <div class="flex justify-between items-center pt-3 border-t">
-                            <a href="{{ route('admin.laporan-pembelian') }}" class="text-red-500 text-sm">Reset</a>
+                            <a href="{{ route('admin.laporan.pembelian') }}" class="text-red-500 text-sm">Reset</a>
                             <button type="submit" class="btn-primary">Terapkan Filter</button>
                         </div>
                     </div>
@@ -428,8 +428,8 @@
                         <span class="bg-white/70 px-2 py-1 rounded">📌 {{ ucfirst(request('status_pembelian')) }}</span>
                     @endif
                     {{-- GANTI SEMUA LINK CETAK MENJADI INI --}}
-                    <a href="{{ route('admin.laporan-pembelian.cetak', request()->except('page')) }}" target="_blank"
-                        class="btn-green">
+                    <a href="{{ route('admin.laporan.pembelian.cetak', request()->except('page')) }}" target="_blank"
+                        class="ms-auto btn-green">
                         🖨️ Cetak Laporan
                     </a>
                 </div>

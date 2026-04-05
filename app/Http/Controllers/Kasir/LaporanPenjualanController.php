@@ -150,6 +150,21 @@ class LaporanPenjualanController extends Controller
         $query = Penjualan::with(['pelanggan', 'user', 'detailPenjualan.barang'])
             ->where('is_delete', 0);
 
+        $mode = $request->mode ?? 'today';
+
+        if ($mode === 'today') {
+            $query->whereDate('tanggal_penjualan', today());
+        } elseif ($mode === 'yesterday') {
+            $query->whereDate('tanggal_penjualan', today()->subDay());
+        } elseif ($mode === '7days') {
+            $query->whereBetween('tanggal_penjualan', [
+                now()->subDays(6)->startOfDay(),
+                now()->endOfDay()
+            ]);
+        } elseif ($mode === 'all') {
+            // semua data
+        }
+
         // 🔍 Filter sama seperti index
         if ($request->search) {
             $query->where(function ($q) use ($request) {

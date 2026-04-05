@@ -17,7 +17,7 @@ class SuperAdminController extends Controller
     public function setMonitoring($id)
     {
         session([
-            'monitoring_sekolah_id' => $id
+            'id_sekolah' => $id
         ]);
 
         return redirect()->route('super-admin.monitoring.index');
@@ -26,7 +26,7 @@ class SuperAdminController extends Controller
     // 🔥 halaman monitoring
     public function index()
     {
-        $sekolahId = session('monitoring_sekolah_id');
+        $sekolahId = session('id_sekolah');
 
         if (!$sekolahId) {
             return redirect()->back()->with('error', 'Pilih sekolah dulu');
