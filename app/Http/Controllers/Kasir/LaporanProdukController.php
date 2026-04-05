@@ -56,8 +56,12 @@ class LaporanProdukController extends Controller
         $totalTerjual = $produkLaris->sum('total_terjual');
         $totalStok = Barang::sum('stok');
         $hampirHabisCount = $hampirHabis->count();
+        $barangs = Barang::all();
+        $kategoriList = $barangs->pluck('kategori')->unique();
 
         return view('role.kasir.laporan_produk', compact(
+            'kategoriList',
+            'barangs',
             'produkLaris',
             'produkSepi',
             'semuaProduk',
