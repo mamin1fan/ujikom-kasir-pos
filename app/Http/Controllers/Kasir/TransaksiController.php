@@ -107,17 +107,21 @@ class TransaksiController extends Controller
     }
 
     public function index()
-    {
-        $barang = Barang::with('kategori')
-            ->where('is_delete', 0)
-            ->where('is_active', 1)
-            ->get();
+{
+    $sekolahId = sekolah_id();
 
-        $kelompok = KelompokPelanggan::all();
-        $pelanggan = Pelanggan::with('kelompok')->where('is_delete', 0)->get();
+    $barang = Barang::with('kategori')
+        ->where('is_delete', 0)
+        ->where('is_active', 1)
+        ->where('id_sekolah', $sekolahId)
+        ->get();
 
-        return view('role.kasir.transaksi', compact('barang', 'pelanggan', 'kelompok'));
-    }
+    $kelompok = KelompokPelanggan::where('id_sekolah', $sekolahId)->get();
+
+    $pelanggan = Pelanggan::with('kelompok')->where('is_delete', 0)->get();
+
+    return view('role.kasir.transaksi', compact('barang', 'pelanggan', 'kelompok'));
+}
 
     /**
      * Show the form for creating a new resource.

@@ -14,7 +14,7 @@ class KelompokKategoriController extends Controller
     {
         $user = Auth::user();
 
-        $kelompok_kategori = KelompokKategori::where('id_sekolah', $user->id_sekolah)
+        $kelompok_kategori = KelompokKategori::where('id_sekolah', sekolah_id())
             ->withCount([
                 'kategori' => function ($q) {
                     $q->where('is_delete', 0);
@@ -23,7 +23,7 @@ class KelompokKategoriController extends Controller
             ->orderBy('nama_kelompok')
             ->paginate(10);
 
-        $total_kelompok_kategori = KelompokKategori::where('id_sekolah', $user->id_sekolah)->count();
+        $total_kelompok_kategori = KelompokKategori::where('id_sekolah', sekolah_id())->count();
 
         return view('role.admin.kelompok_kategori', compact(
             'kelompok_kategori',
@@ -38,7 +38,7 @@ class KelompokKategoriController extends Controller
         ]);
 
         KelompokKategori::create([
-            'id_sekolah' => Auth::user()->id_sekolah,
+            'id_sekolah' => sekolah_id(),
             'nama_kelompok' => $request->nama_kelompok,
             'created_at' => now(),
             'created_by' => Auth::id()
@@ -56,7 +56,7 @@ class KelompokKategoriController extends Controller
         ]);
 
         $kelompok = KelompokKategori::where('id_kelompok', $id)
-            ->where('id_sekolah', Auth::user()->id_sekolah)
+            ->where('id_sekolah', sekolah_id())
             ->firstOrFail();
 
         $kelompok->update([
@@ -71,7 +71,7 @@ class KelompokKategoriController extends Controller
     public function destroy($id)
     {
         $kelompok = KelompokKategori::where('id_kelompok', $id)
-            ->where('id_sekolah', Auth::user()->id_sekolah)
+            ->where('id_sekolah', sekolah_id())
             ->firstOrFail();
 
         $kategori = Kategori::where('id_kelompok', $id)

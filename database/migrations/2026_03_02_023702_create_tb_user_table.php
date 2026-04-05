@@ -4,20 +4,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('tb_user', function (Blueprint $table) {
             $table->id('id_user');
 
             $table->foreignId('id_sekolah')
-                  ->constrained('tb_sekolah', 'id_sekolah')
-                  ->cascadeOnDelete();
+                ->nullable() // ini bikin boleh NULL
+                ->constrained('tb_sekolah', 'id_sekolah')
+                ->nullOnDelete(); // alternatif kalau parent dihapus
 
             $table->foreignId('id_role')
-                  ->constrained('roles', 'id_role')
-                  ->restrictOnDelete();
+                ->constrained('roles', 'id_role')
+                ->restrictOnDelete();
 
             $table->string('username', 50);
             $table->string('password', 255);

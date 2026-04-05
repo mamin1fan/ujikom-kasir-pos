@@ -17,7 +17,7 @@ return new class extends Migration
 
             $table->foreignId('id_barang')
                   ->constrained('tb_barang', 'id_barang')
-                  ->restrictOnDelete();
+                  ->onDelete('cascade');
 
             $table->string('satuan', 20);
             $table->integer('jumlah');

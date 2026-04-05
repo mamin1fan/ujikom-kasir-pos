@@ -19,7 +19,7 @@ class LaporanPembelianController extends Controller
             'detailPembelian.barang'
         ])
         ->where('is_delete', 0)
-        ->where('id_sekolah', $user->id_sekolah);
+        ->where('id_sekolah', sekolah_id());
 
         // Filter tanggal
         if ($request->start && $request->end) {
@@ -51,7 +51,7 @@ class LaporanPembelianController extends Controller
             'detailPembelian.barang'
         ])
         ->where('is_delete', 0)
-        ->where('id_sekolah', $user->id_sekolah);
+        ->where('id_sekolah', sekolah_id());
 
         if ($request->start && $request->end) {
             $query->whereBetween('tanggal_faktur', [

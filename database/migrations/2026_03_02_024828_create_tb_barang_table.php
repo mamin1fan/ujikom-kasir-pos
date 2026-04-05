@@ -13,22 +13,22 @@ return new class extends Migration
 
             $table->foreignId('id_sekolah')
                   ->constrained('tb_sekolah', 'id_sekolah')
-                  ->cascadeOnDelete();
+                  ->onDelete('cascade');
 
             $table->string('barcode', 50);
             $table->string('nama', 150);
 
             $table->foreignId('id_kategori')
                   ->constrained('tb_kategori', 'id_kategori')
-                  ->cascadeOnDelete();
+                  ->onDelete('cascade');
 
             $table->foreignId('id_kelompok_kategori')
                   ->constrained('tb_kelompok_kategori', 'id_kelompok')
-                  ->cascadeOnDelete();
+                  ->onDelete('cascade');
 
             $table->foreignId('id_supplier')
                   ->constrained('tb_supplier', 'id_supplier')
-                  ->cascadeOnDelete();
+                  ->onDelete('cascade');
 
             $table->string('satuan', 20);
 

@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Barang extends Model
 {
+    use SoftDeletes;
     protected $table = 'tb_barang';
+    public $timestamps = false;
     protected $primaryKey = 'id_barang';
     protected $casts = [
         'created_at' => 'datetime',
@@ -29,22 +32,14 @@ class Barang extends Model
         'created_by',
         'updated_by',
         'deleted_by',
+        'deleted_at',
         'is_delete',
     ];
 
-    protected static function booted()
-    {
-        static::addGlobalScope('sekolah', function ($query) {
-            if (auth()->check()) {
-                $query->where('id_sekolah', auth()->user()->id_sekolah);
-            }
-        });
-    }
 
-    // Relasi
     public function sekolah()
     {
-        return $this->belongsTo(Sekolah::class, 'id_sekolah', 'id_sekolah');
+        return $this->belongsTo(Sekolah::class, 'id_sekolah');
     }
 
     public function kategori()

@@ -16,7 +16,7 @@ class KelompokPelangganController extends Controller
      */
     public function index(Request $request)
     {
-        $id_sekolah = Auth::user()->id_sekolah;
+        $id_sekolah = sekolah_id();
 
         $kelompok = KelompokPelanggan::withCount('pelanggan')
             ->where('id_sekolah', $id_sekolah)
@@ -41,7 +41,7 @@ class KelompokPelangganController extends Controller
         ]);
 
         KelompokPelanggan::create([
-            'id_sekolah' => Auth::user()->id_sekolah,
+            'id_sekolah' => sekolah_id(),
             'nama_kelompok' => $request->nama_kelompok
         ]);
 
@@ -60,7 +60,7 @@ class KelompokPelangganController extends Controller
             'nama_kelompok' => 'required|string|max:100'
         ]);
 
-        $id_sekolah = Auth::user()->id_sekolah;
+        $id_sekolah = sekolah_id();
 
         $kelompok = KelompokPelanggan::where('id_kelompok_pelanggan', $id)
             ->where('id_sekolah', $id_sekolah)
@@ -81,7 +81,7 @@ class KelompokPelangganController extends Controller
      */
     public function destroy($id)
     {
-        $id_sekolah = Auth::user()->id_sekolah;
+        $id_sekolah = sekolah_id();
 
         $kelompok = KelompokPelanggan::where('id_kelompok_pelanggan', $id)
             ->where('id_sekolah', $id_sekolah)

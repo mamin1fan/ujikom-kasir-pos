@@ -15,14 +15,14 @@ class SupplierController extends Controller
 
         $suppliers = Supplier::with(['creator'])
             ->where('is_delete', 0)
-            ->where('id_sekolah', $user->id_sekolah)
+            ->where('id_sekolah', sekolah_id())
             ->when($request->search, function ($q) use ($request) {
                 $q->where('nama', 'like', '%' . $request->search . '%');
             })
             ->paginate(10);
 
         $total_supplier = Supplier::where('is_delete', 0)
-            ->where('id_sekolah', $user->id_sekolah)
+            ->where('id_sekolah', sekolah_id())
             ->count();
 
         return view('role.admin.supplier', compact('suppliers', 'total_supplier'));
@@ -40,7 +40,7 @@ class SupplierController extends Controller
         ]);
 
         Supplier::create([
-            'id_sekolah' => $user->id_sekolah,
+            'id_sekolah' => sekolah_id(),
             'nama' => $request->nama,
             'no_telepon' => $request->no_telepon,
             'alamat_supplier' => $request->alamat_supplier,
@@ -66,7 +66,7 @@ class SupplierController extends Controller
         ]);
 
         $supplier = Supplier::where('id_supplier', $id)
-            ->where('id_sekolah', $user->id_sekolah)
+            ->where('id_sekolah', sekolah_id())
             ->firstOrFail();
 
         $supplier->update([
@@ -86,7 +86,7 @@ class SupplierController extends Controller
         $user = Auth::user();
 
         $supplier = Supplier::where('id_supplier', $id)
-            ->where('id_sekolah', $user->id_sekolah)
+            ->where('id_sekolah', sekolah_id())
             ->firstOrFail();
 
         $supplier->update([

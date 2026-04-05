@@ -17,17 +17,17 @@ class KategoriController extends Controller
 
         $kategori = Kategori::with('kelompok', 'creator', 'updater')
             ->whereHas('kelompok', function ($q) use ($user) {
-                $q->where('id_sekolah', $user->id_sekolah)
+                $q->where('id_sekolah', sekolah_id())
                     ->where('is_delete', 0);
             })
             ->where('is_delete', 0)
             ->paginate(10);
 
         $total_kategori = Kategori::whereHas('kelompok', function ($q) use ($user) {
-            $q->where('id_sekolah', $user->id_sekolah);
+            $q->where('id_sekolah', sekolah_id());
         })->where('is_delete', 0)->count();
 
-        $kelompok_kategori = KelompokKategori::where('id_sekolah', $user->id_sekolah)
+        $kelompok_kategori = KelompokKategori::where('id_sekolah', sekolah_id())
             ->orderBy('nama_kelompok')
             ->get();
 

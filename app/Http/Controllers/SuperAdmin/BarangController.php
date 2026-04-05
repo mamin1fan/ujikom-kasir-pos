@@ -27,14 +27,14 @@ class BarangController extends Controller
             });
         }
         $kategori = Kategori::whereHas('kelompok', function ($q) use ($user) {
-            $q->where('id_sekolah', $user->id_sekolah)
+            $q->where('id_sekolah', sekolah_id())
                 ->where('is_delete', 0);
         })->get();
-        $suppliers = Supplier::where('id_sekolah', $user->id_sekolah)
+        $suppliers = Supplier::where('id_sekolah', sekolah_id())
             ->where('is_delete', 0)
             ->orderBy('nama')
             ->get();
-        $kelompok_kategori = KelompokKategori::where('id_sekolah', $user->id_sekolah)
+        $kelompok_kategori = KelompokKategori::where('id_sekolah', sekolah_id())
             ->orderBy('nama_kelompok')
             ->get();
         $barang = $query->orderBy('id_barang', 'desc')->paginate(10);
@@ -59,7 +59,7 @@ class BarangController extends Controller
         ]);
 
         Barang::create([
-            'id_sekolah' => Auth::user()->id_sekolah, // otomatis sekolah login
+            'id_sekolah' => sekolah_id(), // otomatis sekolah login
             'id_kelompok_kategori' => $request->id_kelompok_kategori,
             'id_kategori' => $request->id_kategori,
             'id_supplier' => $request->id_supplier,

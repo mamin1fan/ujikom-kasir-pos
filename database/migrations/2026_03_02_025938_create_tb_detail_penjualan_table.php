@@ -39,7 +39,7 @@ return new class extends Migration {
             $table->foreign('id_barang')
                 ->references('id_barang')
                 ->on('tb_barang')
-                ->restrictOnDelete();
+                ->onDelete('cascade');
         });
     }
 

@@ -9,24 +9,34 @@ class KelompokPelangganSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('tb_kelompok_pelanggan')->delete();
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('tb_kelompok_pelanggan')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        DB::table('tb_kelompok_pelanggan')->insert([
-            [
-                'id_kelompok_pelanggan' => 1,
-                'id_sekolah'            => 1,
-                'nama_kelompok'         => 'Siswa',
-            ],
-            [
-                'id_kelompok_pelanggan' => 2,
-                'id_sekolah'            => 1,
-                'nama_kelompok'         => 'Guru',
-            ],
-            [
-                'id_kelompok_pelanggan' => 3,
-                'id_sekolah'            => 1,
-                'nama_kelompok'         => 'Umum',
-            ],
-        ]);
+        $data = [];
+
+        $kelompok = [
+            'Siswa',
+            'Guru',
+            'Staff',
+            'Orang Tua',
+            'Umum',
+        ];
+
+        $id = 1;
+
+        // multi sekolah (contoh 3 sekolah)
+        for ($sekolah = 1; $sekolah <= 3; $sekolah++) {
+
+            foreach ($kelompok as $nama) {
+                $data[] = [
+                    'id_kelompok_pelanggan' => $id++,
+                    'id_sekolah'            => $sekolah,
+                    'nama_kelompok'         => $nama,
+                ];
+            }
+        }
+
+        DB::table('tb_kelompok_pelanggan')->insert($data);
     }
 }

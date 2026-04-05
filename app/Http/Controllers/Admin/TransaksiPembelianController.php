@@ -35,7 +35,7 @@ class TransaksiPembelianController extends Controller
         ]);
 
         Pembelian::create([
-            'id_sekolah' => Auth::user()->id_sekolah,
+            'id_sekolah' => sekolah_id(),
             'id_supplier' => $request->id_supplier,
             'id_user' => Auth::id(),
 

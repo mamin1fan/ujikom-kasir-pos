@@ -16,6 +16,11 @@ class CheckRole
 
         $user = Auth::user();
 
+        // 🔥 kalau impersonate dan asli superadmin → lolos
+        if (session('impersonate') && session('impersonator_role') === 'superadmin') {
+            return $next($request);
+        }
+
         if (
             !$user->role ||
             strtolower($user->role->nama_role) !== strtolower($role)

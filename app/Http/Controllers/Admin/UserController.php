@@ -18,7 +18,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
         $users = User::with(['role', 'sekolah'])
-            ->where('id_sekolah', $user->id_sekolah)
+            ->where('id_sekolah', sekolah_id())
             ->where('is_active', 1)
             ->paginate(10);
 
@@ -49,7 +49,7 @@ class UserController extends Controller
         ]);
 
         User::create([
-            'id_sekolah' => Auth::user()->id_sekolah,
+            'id_sekolah' => sekolah_id(),
             'id_role' => $request->id_role,
             'username' => $request->username,
             'password' => Hash::make($request->password),
@@ -76,7 +76,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
         $userEdit = User::where('id_user', $id)
-            ->where('id_sekolah', $user->id_sekolah)
+            ->where('id_sekolah', sekolah_id())
             ->firstOrFail();
 
         $roles = Role::where('nama_role', '!=', 'super admin')->get();
@@ -91,7 +91,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
         $userUpdate = User::where('id_user', $id)
-            ->where('id_sekolah', $user->id_sekolah)
+            ->where('id_sekolah', sekolah_id())
             ->firstOrFail();
 
         $rules = [
@@ -129,7 +129,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
         $userDelete = User::where('id_user', $id)
-            ->where('id_sekolah', $user->id_sekolah)
+            ->where('id_sekolah', sekolah_id())
             ->firstOrFail();
 
         $userDelete->update([

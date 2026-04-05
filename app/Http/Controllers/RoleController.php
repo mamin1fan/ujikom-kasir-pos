@@ -15,6 +15,12 @@ class RoleController extends Controller
             return redirect('/');
         }
 
+        // 🔴 CEK STATUS AKTIF
+        if ($user->is_active == 0) {
+            Auth::logout(); // paksa logout
+            return redirect('/')->with('error', 'Akun tidak aktif');
+        }
+
         // ambil nama role dari relasi
         $roleName = $user->role->nama_role ?? null;
 

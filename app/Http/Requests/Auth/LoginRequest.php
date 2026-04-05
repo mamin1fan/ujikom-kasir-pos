@@ -23,33 +23,39 @@ class LoginRequest extends FormRequest
             'password' => ['required', 'string'],
         ];
     }
-
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
 
-        // Kalau MULTI SEKOLAH pakai id_sekolah
         $credentials = [
             'username' => $this->username,
             'password' => $this->password,
-            'is_active' => 1,
         ];
 
-        if (! Auth::attempt($credentials, $this->boolean('remember'))) {
+        // ❌ kalau login gagal
+        if (!Auth::attempt($credentials, $this->boolean('remember'))) {
 
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'username' => trans('auth.failed'),
+                'username' => 'Username atau password salah.',
+            ]);
+        }
+
+        // ✅ login berhasil → cek is_active
+        if (Auth::user()->is_active == 0) {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'username' => 'Akun anda tidak aktif, hubungi admin.',
             ]);
         }
 
         RateLimiter::clear($this->throttleKey());
     }
-
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
 

@@ -64,131 +64,184 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+                {{-- 🔥 RIBBON HEADER (STATS) --}}
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 
+                bg-gradient-to-r from-indigo-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 
+                p-4 rounded-xl">
 
-                {{-- Header Action --}}
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-
-                    {{-- Search --}}
-                    <div class="w-full md:w-1/3">
-                        <input type="text" placeholder="Cari sekolah..."
-                            class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-indigo-200 dark:bg-gray-700 dark:text-white">
+                    {{-- TITLE --}}
+                    <div>
+                        <h3 class="font-semibold text-lg">Management Sekolah</h3>
+                        <p class="text-xs text-gray-500">Monitoring semua sekolah dalam satu tempat</p>
                     </div>
 
-                    {{-- Button Tambah --}}
-                    <button type="button" onclick="tambahSekolah()"
+                    {{-- STATS --}}
+                    <div class="flex gap-3 text-sm">
+
+                        <div>
+                            <p class="text-gray-500">Total</p>
+                            <p class="font-bold text-indigo-600 text-lg">
+                                {{ $sekolahs->count() }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-gray-500">Aktif</p>
+                            <p class="font-bold text-green-600 text-lg">
+                                {{ $sekolahs->where('is_active', 1)->count() }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-gray-500">Non Aktif</p>
+                            <p class="font-bold text-red-600 text-lg">
+                                {{ $sekolahs->where('is_active', 0)->count() }}
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+                {{-- 🔍 SEARCH + BUTTON --}}
+                <div class="flex flex-col md:flex-row md:justify-between gap-4 mt-4">
+
+                    <input type="text" placeholder="Cari sekolah..." readonly
+                        class="cursor-not-allowed w-full md:w-1/3 px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+
+                    <button onclick="tambahSekolah()"
                         class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
                         + Tambah Sekolah
                     </button>
+
                 </div>
 
-                {{-- Card Statistik --}}
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div class="bg-indigo-50 dark:bg-gray-700 p-4 rounded-xl shadow">
-                        <p class="text-gray-600 dark:text-gray-300 text-sm">Total Sekolah</p>
-                        <h3 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{{ $sekolahs->count() }}
-                        </h3>
-                    </div>
-
-                    <div class="bg-green-50 dark:bg-gray-700 p-4 rounded-xl shadow">
-                        <p class="text-gray-600 dark:text-gray-300 text-sm">Sekolah Aktif</p>
-                        <h3 class="text-2xl font-bold text-green-600 dark:text-green-400">
-                            {{ $sekolahs->where('is_active', '1')->count() }}</h3>
-                    </div>
-
-                    <div class="bg-red-50 dark:bg-gray-700 p-4 rounded-xl shadow">
-                        <p class="text-gray-600 dark:text-gray-300 text-sm">Non Aktif</p>
-                        <h3 class="text-2xl font-bold text-red-600 dark:text-red-400">
-                            {{ $sekolahs->where('is_active', '0')->count() }}</h3>
-                    </div>
-                </div>
 
                 {{-- Table Sekolah --}}
-                <div class="overflow-x-auto">
-                    <table class="min-w-full border border-gray-200 dark:border-gray-700">
-                        <thead class="bg-gray-100 dark:bg-gray-700">
-                            <tr>
-                                <th class="px-4 py-2 text-left text-sm font-semibold">No</th>
-                                <th class="px-4 py-2 text-left text-sm font-semibold">Nama Sekolah</th>
-                                <th class="px-4 py-2 text-left text-sm font-semibold">Alamat</th>
-                                <th class="px-4 py-2 text-left text-sm font-semibold">Website</th>
-                                <th class="px-4 py-2 text-left text-sm font-semibold">Status</th>
-                                <th class="px-4 py-2 text-center text-sm font-semibold">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                <div class="overflow-x-auto mt-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-                            {{-- Contoh Data --}}
-                            @foreach ($sekolahs as $item)
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                    <td class="px-4 py-2">{{ $loop->iteration }}</td>
-                                    <td class="px-4 py-2 font-medium">{{ $item->nama_sekolah }}</td>
-                                    <td class="px-4 py-2 font-medium">{{ $item->alamat_sekolah }}</td>
-                                    <td class="px-4 py-2 ">
-                                        @if ($item->website)
-                                            <a href="{{ Str::startsWith($item->website, ['http://', 'https://']) ? $item->website : 'https://' . $item->website }}"
-                                                target="_blank" class="text-indigo-600 hover:underline">
-                                                {{ $item->website }}
-                                            </a>
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-                                    <td class="px-4 py-2 font-medium">
-                                        @if ($item->is_active == 1)
-                                            <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">
-                                                Active
-                                            </span>
-                                        @else
-                                            <span class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full">
-                                                Non Active
-                                            </span>
-                                        @endif
-                                    </td>
+                        @foreach ($sekolahs as $item)
+                                                <div
+                                                    class="group relative bg-white dark:bg-gray-800 rounded-2xl shadow p-5 
+                                                                        hover:shadow-2xl hover:-translate-y-1 transition duration-300 flex flex-col">
 
-                                    <td class="px-4 py-2 text-center space-x-2 gap-2 flex justify-center">
+                                                    {{-- 🔥 HEADER --}}
+                                                    <div class="flex justify-between items-start mb-3">
+                                                        <div>
+                                                            <h3 class="text-lg font-semibold group-hover:text-indigo-600 transition">
+                                                                {{ $item->nama_sekolah }}
+                                                            </h3>
+                                                            <p class="text-xs text-gray-400">
+                                                                {{ $item->alamat_sekolah }}
+                                                            </p>
+                                                        </div>
 
-                                        {{-- Tombol Edit --}}
-                                        <button type="button"
-                                            class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm transition"
-                                            data-sekolah='@json($item)' onclick="editSekolah(this)">
-                                            Edit
-                                        </button>
+                                                        <div>
+                                                            @if ($item->is_active)
+                                                                <span class="flex items-center gap-1 text-green-500 text-xs font-medium">
+                                                                    ● Aktif
+                                                                </span>
+                                                            @else
+                                                                <span class="flex items-center gap-1 text-red-500 text-xs font-medium">
+                                                                    ● Offline
+                                                                </span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
 
-                                        {{-- Toggle Active --}}
-                                        <form action="{{ route('super-admin.sekolah.status', $item->id_sekolah) }}"
-                                            method="POST" class="inline">
-                                            @csrf
-                                            @method('PUT')
+                                                    {{-- 🔥 MINI STATS --}}
+                                                    <div class="grid grid-cols-3 gap-3 my-4 text-center">
 
-                                            @if ($item->is_active == 1)
-                                                <input type="hidden" name="is_active" value="0">
-                                                <button
-                                                    class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm transition">
-                                                    Deactivate
-                                                </button>
-                                            @else
-                                                <input type="hidden" name="is_active" value="1">
-                                                <button
-                                                    class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm transition">
-                                                    Activate
-                                                </button>
-                                            @endif
-                                        </form>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg">
+                                                            <p class="text-xs text-gray-400">User</p>
+                                                            <p class="font-bold">{{ $item->users_count ?? 0 }}</p>
+                                                        </div>
 
-                                    </td>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg">
+                                                            <p class="text-xs text-gray-400">Transaksi</p>
+                                                            <p class="font-bold">{{ $item->transaksi_count ?? 0 }}</p>
+                                                        </div>
 
-                                </tr>
-                            @endforeach
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg">
+                                                            <p class="text-xs text-gray-400">Hari Ini</p>
+                                                            <p class="font-bold">{{ $item->today_transaksi ?? 0 }}</p>
+                                                        </div>
+
+                                                    </div>
+
+                                                    {{-- 🌐 WEBSITE --}}
+                                                    <div class="text-xs text-gray-500 mb-4 truncate">
+                                                        @if ($item->website)
+                                                            🌐 {{ $item->website }}
+                                                        @else
+                                                            Tidak ada website
+                                                        @endif
+                                                    </div>
+
+                                                    {{-- 🔥 ACTION --}}
+                                                    <div class="mt-auto flex justify-between items-center">
+
+                                                        <div class="flex gap-2">
+
+                                                            {{-- EDIT --}}
+                                                            <button onclick="editSekolah(this)" data-sekolah='@json($item)'
+                                                                class="px-3 py-1 text-xs bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                                                                Edit
+                                                            </button>
+
+                                                            {{-- STATUS --}}
+                                                            <form action="{{ route('super-admin.sekolah.status', $item->id_sekolah) }}"
+                                                                method="POST" class="form-toggle">
+                                                                @csrf
+                                                                @method('PUT')
+
+                                                                <input type="hidden" name="is_active" value="{{ $item->is_active ? 0 : 1 }}">
+
+                                                                <button class="px-3 py-1 text-xs text-white rounded
+                                                                                {{ $item->is_active ? 'bg-red-600' : 'bg-green-600' }}">
+                                                                    {{ $item->is_active ? 'Off' : 'On' }}
+                                                                </button>
+                                                            </form>
+
+                                                        </div>
+
+                                                        {{-- 🔥 CTA UTAMA --}}
+                                                        <a href="{{ route('super-admin.pantau', $item->id_sekolah) }}"
+                                                            class="px-4 py-1 text-xs bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                                                            👁 Pantau
+                                                        </a>
+
+                                                    </div>
 
 
-                        </tbody>
-                    </table>
+                                                    {{-- 🔥 HOVER OVERLAY --}}
+                                                    <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition
+                            bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none"></div>
+
+
+                                                </div>
+
+
+                        @endforeach
+
+                    </div>
                 </div>
 
             </div>
 
         </div>
     </div>
+    @if ($errors->any())
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                if (window.Flux && window.Flux.showModal) {
+                    window.Flux.showModal('tambah-sekolah');
+                } else {
+                    document.getElementById('tambah-sekolah-trigger').click();
+                }
+            });
+        </script>
+    @endif
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
@@ -220,7 +273,7 @@
 
             // Tambahkan konfirmasi SweetAlert untuk toggle active
             document.querySelectorAll('form.inline').forEach(form => {
-                form.addEventListener('submit', function(e) {
+                form.addEventListener('submit', function (e) {
                     e.preventDefault(); // hentikan submit default
                     const isActiveInput = this.querySelector('input[name="is_active"]');
                     const actionText = isActiveInput.value == 1 ? 'Activate' : 'Deactivate';

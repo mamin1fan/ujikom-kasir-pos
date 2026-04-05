@@ -7,6 +7,11 @@ use App\Http\Controllers\RoleController;
 
 use App\Http\Controllers\SuperAdmin\BarangController as SuperAdminBarangController;
 use App\Http\Controllers\SuperAdmin\SekolahController as SuperAdminSekolahController;
+use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboardController;
+use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
+use App\Http\Controllers\SuperAdmin\SuperAdminController as SuperAdminMonitoringController;
+use App\Http\Controllers\RestoreController as SuperAdminRestoreController;
+
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\BarangController as AdminBarangController;
 use App\Http\Controllers\Admin\KategoriController as AdminKategoriController;
@@ -43,29 +48,82 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
+Route::get('/operasional/dashboard', [SuperAdminMonitoringController::class, 'dashboard'])->name('panel.operasional');
 Route::get('/redirect-role', [RoleController::class, 'redirectByRole'])
     ->middleware('auth');
 
+Route::middleware(['auth', 'role:super admin'])->group(function () {
+    Route::prefix('super-admin')->name('super-admin.')->group(function () {
 
-Route::prefix('super-admin')->name('super-admin.')->group(function () {
-    Route::get('/', [SuperAdminBarangController::class, 'index'])
-        ->name('barang.index');
-    Route::post('/store', [SuperAdminBarangController::class, 'store'])
-        ->name('barang.store');
-    Route::put('/update/{id}', [SuperAdminBarangController::class, 'update'])
-        ->name('barang.update');
-    Route::delete('/destroy/{id}', [SuperAdminBarangController::class, 'destroy'])
-        ->name('barang.destroy');
-    Route::get('/sekolah', [SuperAdminSekolahController::class, 'index'])
-        ->name('sekolah.index');
-    Route::post('/sekolah/store', [SuperAdminSekolahController::class, 'store'])
-        ->name('sekolah.store');
-    Route::put('/sekolah/update/{id}', [SuperAdminSekolahController::class, 'update'])
-        ->name('sekolah.update');
-    Route::put('/sekolah/{id}/status', [SuperAdminSekolahController::class, 'updateStatus'])->name('sekolah.status');
+        Route::get('/super-admin/pantau/{id}', [SuperAdminMonitoringController::class, 'pantau'])
+            ->name('pantau');
+
+        // // set sekolah yang dipantau
+        // Route::get('/monitoring/{id}', [SuperAdminMonitoringController::class, 'setMonitoring'])
+        //     ->name('monitoring.set');
+
+        // // halaman monitoring
+        // Route::get('/monitoring', [SuperAdminMonitoringController::class, 'index'])
+        //     ->name('monitoring.index');
+
+        // Route::get('/impersonate/{user}', [ImpersonateController::class, 'loginAs'])
+        //     ->name('impersonate.login');
+        // Route::get('/stop-impersonate', [ImpersonateController::class, 'stop'])
+        //     ->name('impersonate.stop');
+
+        Route::get('/', [SuperAdminBarangController::class, 'index'])
+            ->name('barang.index');
+        Route::post('/store', [SuperAdminBarangController::class, 'store'])
+            ->name('barang.store');
+        Route::put('/update/{id}', [SuperAdminBarangController::class, 'update'])
+            ->name('barang.update');
+        Route::delete('/destroy/{id}', [SuperAdminBarangController::class, 'destroy'])
+            ->name('barang.destroy');
+
+        Route::get('/sekolah', [SuperAdminSekolahController::class, 'index'])->name('sekolah.index');
+        Route::post('/sekolah', [SuperAdminSekolahController::class, 'store'])->name('sekolah.store');
+        Route::put('/sekolah/{id}', [SuperAdminSekolahController::class, 'update'])->name('sekolah.update');
+        Route::put('/sekolah/{id}/status', [SuperAdminSekolahController::class, 'toggleStatus'])->name('sekolah.status');
+
+        Route::get('/dashboard', [SuperAdminDashboardController::class, 'index'])
+            ->name('dashboard');
+
+
+        // tampil halaman
+        Route::get('/user', [SuperAdminUserController::class, 'index'])
+            ->name('user.index');
+        // tambah user
+        Route::post('/user', [SuperAdminUserController::class, 'store'])
+            ->name('user.store');
+        // update user (edit + toggle status)
+        Route::put('/user/{id}', [SuperAdminUserController::class, 'update'])
+            ->name('user.update');
+        Route::put('/user/{id}/activate', [SuperAdminUserController::class, 'activate'])
+            ->name('user.activate');
+
+
+
+        Route::prefix('restore')->name('restore.')->group(function () {
+
+            // Route untuk tiap tipe
+            Route::get('/barang', [SuperAdminRestoreController::class, 'index'])->name('barang')->defaults('type', 'barang');
+            Route::get('/kategori', [SuperAdminRestoreController::class, 'index'])->name('kategori')->defaults('type', 'kategori');
+            Route::get('/pelanggan', [SuperAdminRestoreController::class, 'index'])->name('pelanggan')->defaults('type', 'pelanggan');
+            Route::get('/pembelian', [SuperAdminRestoreController::class, 'index'])->name('pembelian')->defaults('type', 'pembelian');
+            Route::get('/penjualan', [SuperAdminRestoreController::class, 'index'])->name('penjualan')->defaults('type', 'penjualan');
+            Route::get('/supplier', [SuperAdminRestoreController::class, 'index'])->name('supplier')->defaults('type', 'supplier');
+
+        });
+        Route::get('/restore/{type}', [SuperAdminRestoreController::class, 'index'])
+            ->name('restore.index');
+        Route::post('/restore/{type}/{id}', [SuperAdminRestoreController::class, 'restore'])
+            ->name('restore.restore');
+        Route::delete('/restore/{type}/{id}', [SuperAdminRestoreController::class, 'forceDelete'])
+            ->name('restore.forceDelete');
+
+
+    });
 });
-
 
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -151,6 +209,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
             ->name('laporan.stok.excel');
         Route::get('laporan-stok/pdf', [AdminLaporanStokController::class, 'exportPdf'])
             ->name('laporan.stok.pdf');
+
+        // Menu Kasir
+        Route::get('/laporan/produk', [KasirLaporanProdukController::class, 'laporanProduk'])
+            ->name('laporan.produk');
+        Route::get('/laporan/produk/export', [KasirLaporanProdukController::class, 'export'])
+            ->name('laporan.produk.export');
+        Route::get('/rekap/harian', [KasirRekapHarianController::class, 'rekapHarian'])
+            ->name('rekap.harian');
     });
 });
 
@@ -191,5 +257,17 @@ Route::middleware(['auth', 'role:kasir'])->group(function () {
             ->name('rekap.harian');
     });
 });
+
+Route::get('/super-admin/keluar-mode', function () {
+    session()->forget([
+        'mode',
+        'impersonate',
+        'impersonator_role',
+        'id_sekolah',
+        'nama_sekolah'
+    ]);
+
+    return redirect()->route('super-admin.dashboard');
+})->name('super-admin.keluar-mode');
 
 require __DIR__ . '/auth.php';
