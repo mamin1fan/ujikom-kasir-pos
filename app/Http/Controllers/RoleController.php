@@ -17,26 +17,27 @@ class RoleController extends Controller
 
         // 🔴 CEK STATUS AKTIF
         if ($user->is_active == 0) {
-            Auth::logout(); // paksa logout
+            Auth::logout();
             return redirect('/')->with('error', 'Akun tidak aktif');
         }
 
-        // ambil nama role dari relasi
         $roleName = $user->role->nama_role ?? null;
 
-        switch ($roleName) {
+        // ✅ Mapping role (lebih clean & scalable)
+        $routes = [
+            'super admin' => 'super-admin.dashboard',
+            'admin' => 'admin.dashboard',
+            'kasir' => 'kasir.dashboard',
+        ];
 
-            case 'super admin':
-                return redirect('/super-admin');
-
-            case 'admin':
-                return redirect('/admin');
-
-            case 'kasir':
-                return redirect('/kasir');
-
-            default:
-                return redirect('/dashboard');
+        // ✅ Kalau role ada → redirect
+        if (isset($routes[$roleName])) {
+            return redirect()->route($routes[$roleName]);
         }
+
+        // ❗ Kalau role tidak dikenali tapi masih login
+        // fallback: logout biar tidak nyangkut
+        // Auth::logout();
+        // return redirect('/')->with('error', 'Role tidak dikenali');
     }
 }

@@ -316,6 +316,9 @@
             request('pelanggan') ||
             request('id_pelanggan');
     @endphp
+    @php
+        $role = auth()->user()->role?->nama_role;   // tambahkan ?-> untuk menghindari error kalau role null
+    @endphp
 
     <div class="py-8 lp">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
@@ -327,15 +330,42 @@
                     <p class="text-sm opacity-80">Klik untuk membuka halaman kasir</p>
                 </div>
 
-                <a href="{{ route('kasir.transaksi') }}"
-                    class="bg-white text-blue-600 px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-blue-50 transition flex items-center gap-2">
 
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 5l7 7-7 7" />
-                    </svg>
+@if ($role === 'admin')
+    <!-- Button untuk Admin (Disabled + Tooltip) -->
+    <div class="group relative">
+        <a href="#" 
+           onclick="return false;"
+           class="bg-gray-100 text-gray-400 px-5 py-2.5 rounded-lg text-sm font-bold cursor-not-allowed flex items-center gap-2">
 
-                    Buka POS
-                </a>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 5l7 7-7 7" />
+            </svg>
+
+            Buka POS
+        </a>
+
+        <!-- Tooltip yang muncul saat hover -->
+        <div class="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded px-3 py-1.5 -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap shadow-lg z-10">
+            ⚠️ Hanya untuk Kasir
+            <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+        </div>
+    </div>
+
+@else
+    <!-- Button normal untuk Kasir -->
+    <a href="{{ route('kasir.transaksi') }}"
+       class="bg-white text-blue-600 px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-blue-50 transition flex items-center gap-2">
+
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 5l7 7-7 7" />
+        </svg>
+
+        Buka POS
+    </a>
+@endif
+
+          
             </div>
 
 
@@ -386,37 +416,71 @@
 
                     {{-- ⚡ QUICK FILTER --}}
                     <div class="flex flex-wrap items-center gap-2">
+                        @if ($role == 'admin')
+                            {{-- MODE --}}
+                            <a href="{{ $manualFilter ? '#' : route('admin.penjualan', ['mode' => 'today']) }}" class="px-3 py-1.5 rounded-lg text-sm font-semibold
+                                       {{ request('mode') == 'today' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}
+                                       {{ $manualFilter ? 'opacity-50 pointer-events-none' : '' }}">
+                                Hari Ini
+                            </a>
 
-                        {{-- MODE --}}
-                        <a href="{{ $manualFilter ? '#' : route('kasir.penjualan', ['mode' => 'today']) }}" class="px-3 py-1.5 rounded-lg text-sm font-semibold
-   {{ request('mode') == 'today' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}
-   {{ $manualFilter ? 'opacity-50 pointer-events-none' : '' }}">
-                            Hari Ini
-                        </a>
+                            <a href="{{ $manualFilter ? '#' : route('admin.penjualan', ['mode' => 'yesterday']) }}" class="px-3 py-1.5 rounded-lg text-sm font-semibold
+                                           {{ request('mode') == 'yesterday' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}
+                                           {{ $manualFilter ? 'opacity-50 pointer-events-none' : '' }}">
+                                Kemarin
+                            </a>
 
-                        <a href="{{ $manualFilter ? '#' : route('kasir.penjualan', ['mode' => 'yesterday']) }}" class="px-3 py-1.5 rounded-lg text-sm font-semibold
-       {{ request('mode') == 'yesterday' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}
-       {{ $manualFilter ? 'opacity-50 pointer-events-none' : '' }}">
-                            Kemarin
-                        </a>
+                            <a href="{{ $manualFilter ? '#' : route('admin.penjualan', ['mode' => '7days']) }}" class="px-3 py-1.5 rounded-lg text-sm font-semibold
+                                           {{ request('mode') == '7days' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}
+                                           {{ $manualFilter ? 'opacity-50 pointer-events-none' : '' }}">
+                                7 Hari
+                            </a>
 
-                        <a href="{{ $manualFilter ? '#' : route('kasir.penjualan', ['mode' => '7days']) }}" class="px-3 py-1.5 rounded-lg text-sm font-semibold
-       {{ request('mode') == '7days' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}
-       {{ $manualFilter ? 'opacity-50 pointer-events-none' : '' }}">
-                            7 Hari
-                        </a>
+                            <a href="{{ $manualFilter ? '#' : route('admin.penjualan', ['mode' => 'all']) }}" class="px-3 py-1.5 rounded-lg text-sm font-semibold
+                                           {{ request('mode') == 'all' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}
+                                           {{ $manualFilter ? 'opacity-50 pointer-events-none' : '' }}">
+                                Semua
+                            </a>
 
-                        <a href="{{ $manualFilter ? '#' : route('kasir.penjualan', ['mode' => 'all']) }}" class="px-3 py-1.5 rounded-lg text-sm font-semibold
-       {{ request('mode') == 'all' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}
-       {{ $manualFilter ? 'opacity-50 pointer-events-none' : '' }}">
-                            Semua
-                        </a>
+                            {{-- 🔥 RESET --}}
+                            <a href="{{ route('admin.penjualan', ['mode' => 'today']) }}"
+                                class="px-3 py-1.5 ms-auto rounded-lg text-sm font-semibold bg-red-100 text-red-600">
+                                Reset
+                            </a>
+                        @elseif ($role == 'kasir')
+                            {{-- MODE --}}
+                            <a href="{{ $manualFilter ? '#' : route('kasir.penjualan', ['mode' => 'today']) }}" class="px-3 py-1.5 rounded-lg text-sm font-semibold
+                                           {{ request('mode') == 'today' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}
+                                           {{ $manualFilter ? 'opacity-50 pointer-events-none' : '' }}">
+                                Hari Ini
+                            </a>
 
-                        {{-- 🔥 RESET --}}
-                        <a href="{{ route('kasir.penjualan', ['mode' => 'today']) }}"
-                            class="px-3 py-1.5 ms-auto rounded-lg text-sm font-semibold bg-red-100 text-red-600">
-                            Reset
-                        </a>
+                            <a href="{{ $manualFilter ? '#' : route('kasir.penjualan', ['mode' => 'yesterday']) }}" class="px-3 py-1.5 rounded-lg text-sm font-semibold
+                                               {{ request('mode') == 'yesterday' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}
+                                               {{ $manualFilter ? 'opacity-50 pointer-events-none' : '' }}">
+                                Kemarin
+                            </a>
+
+                            <a href="{{ $manualFilter ? '#' : route('kasir.penjualan', ['mode' => '7days']) }}" class="px-3 py-1.5 rounded-lg text-sm font-semibold
+                                               {{ request('mode') == '7days' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}
+                                               {{ $manualFilter ? 'opacity-50 pointer-events-none' : '' }}">
+                                7 Hari
+                            </a>
+
+                            <a href="{{ $manualFilter ? '#' : route('kasir.penjualan', ['mode' => 'all']) }}" class="px-3 py-1.5 rounded-lg text-sm font-semibold
+                                               {{ request('mode') == 'all' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-slate-800' }}
+                                               {{ $manualFilter ? 'opacity-50 pointer-events-none' : '' }}">
+                                Semua
+                            </a>
+
+                            {{-- 🔥 RESET --}}
+                            <a href="{{ route('kasir.penjualan', ['mode' => 'today']) }}"
+                                class="px-3 py-1.5 ms-auto rounded-lg text-sm font-semibold bg-red-100 text-red-600">
+                                Reset
+                            </a>
+                        @endif
+
+
 
                     </div>
 
@@ -514,9 +578,19 @@
 
                         {{-- ACTION --}}
                         <div class="flex justify-between items-center pt-3 border-t">
-                            <a href="{{ route('kasir.penjualan') }}" class="text-red-500 text-sm">
-                                Reset
-                            </a>
+                            <div>
+                                @if($role == 'admin')
+                                    <a href="{{ route('admin.penjualan', ['mode' => 'today']) }}"
+                                        class="text-red-500 text-sm">
+                                        Reset
+                                    </a>
+                                @elseif($role == 'kasir')
+                                    <a href="{{ route('kasir.penjualan', ['mode' => 'today']) }}"
+                                        class="text-red-500 text-sm">
+                                        Reset
+                                    </a>
+                                @endif
+                            </div>
 
                             <button type="submit" class="btn-primary">
                                 Terapkan Filter
@@ -527,7 +601,7 @@
                 </div>
             </form>
 
-            @if(request()->hasAny(['mode','from', 'to', 'search', 'status_pembayaran', 'month', 'pelanggan', 'id_pelanggan']))
+            @if(request()->hasAny(['mode', 'from', 'to', 'search', 'status_pembayaran', 'month', 'pelanggan', 'id_pelanggan']))
                 <div
                     class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 px-4 py-3 rounded-xl text-sm flex flex-wrap items-center gap-2">
                     <span class="font-semibold">Menampilkan:</span>
@@ -559,10 +633,18 @@
                     @elseif(request('pelanggan') == 'non')
                         <span class="bg-white/70 px-2 py-1 rounded">👤 Non Pelanggan</span>
                     @endif
-                    <a href="{{ route('kasir.penjualan.cetak', request()->except('page')) }}" target="_blank"
-                        class="ms-auto btn-green">
-                        🖨️ Cetak Laporan
-                    </a>
+
+                    @if($role == 'admin')
+                        <a href="{{ route('admin.penjualan.cetak', request()->except('page')) }}" target="_blank"
+                            class="ms-auto btn-green">
+                            🖨️ Cetak Laporan
+                        </a>
+                    @elseif($role == 'kasir')
+                        <a href="{{ route('kasir.penjualan.cetak', request()->except('page')) }}" target="_blank"
+                            class="ms-auto btn-green">
+                            🖨️ Cetak Laporan
+                        </a>
+                    @endif
                 </div>
             @endif
 

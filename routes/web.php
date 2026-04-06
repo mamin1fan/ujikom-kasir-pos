@@ -37,42 +37,34 @@ use App\Http\Controllers\Kasir\{
     LaporanKasirController as KasirLaporanKasirController,
     RekapHarianController as KasirRekapHarianController,
 };
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 use App\Http\Controllers\RestoreController as SuperAdminRestoreController;
 
-// ====================== GUEST (Belum Login) ======================
-Route::middleware('guest')->group(function () {
-    Route::get('/', function () {
-        return view('auth.login');
-    })->name('login');
-});
 
 // ====================== AUTHENTICATED ======================
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () { // hapus 'verified'
 
-    // Dashboard umum (opsional)
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-    // Redirect berdasarkan role
     Route::get('/redirect-role', [RoleController::class, 'redirectByRole'])
         ->name('redirect-role');
 
-    // Profile
+    Route::get('/', function () {
+        return redirect()->route('redirect-role');
+    });
+});
+
+// Profile tetap pakai verified
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-
-
 });
 
 // ====================== SUPER ADMIN ======================
 Route::middleware(['auth', 'role:super admin'])->group(function () {
     // impersonate mode
     // Operasional
-    Route::get('/operasional/dashboard', [SuperAdminMonitoringController::class, 'dashboard'])
+    Route::get('/operasional/dashboard', [SuperAdminMonitoringController::class, 'super.admin.dashboard'])
         ->name('panel.operasional');
 
     Route::prefix('super-admin')->name('super-admin.')->group(function () {
@@ -132,6 +124,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
+     // Laporan & Cetak
+    Route::get('/penjualan', [KasirLaporanPenjualanController::class, 'index'])->name('penjualan');
+    Route::get('/penjualan/cetak', [KasirLaporanPenjualanController::class, 'cetak'])->name('penjualan.cetak');
+
     // Resource Routes (lebih bersih)
     Route::resource('barang', AdminBarangController::class);
     Route::resource('kategori', AdminKategoriController::class);
@@ -144,12 +140,22 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     });
     Route::resource('supplier', AdminSupplierController::class);
     Route::resource('user', AdminUserController::class);
-    Route::prefix('transaksi')->name('transaksi.')->group(function () {
-        Route::resource('pembelian', AdminTransaksiPembelianController::class);
-    });
+    Route::get('/transaksi/pembelian', [AdminTransaksiPembelianController::class, 'index'])
+        ->name('transaksi.pembelian.index');
+
+    // CRUD Laporan Pembelian
+    Route::get('transaksi/pembelian', [AdminTransaksiPembelianController::class, 'index'])->name('transaksi.pembelian.index');
+    // Route::get('transaksi/pembelian/create', [AdminTransaksiPembelianController::class, 'create'])->name('transaksi.pembelian.create');
+    Route::post('transaksi/pembelian', [AdminTransaksiPembelianController::class, 'store'])->name('transaksi.pembelian.store');
+    Route::get('transaksi/pembelian/{id}/edit', [AdminTransaksiPembelianController::class, 'edit'])->name('transaksi.pembelian.edit');
+    Route::put('transaksi/pembelian/{id}', [AdminTransaksiPembelianController::class, 'update'])->name('transaksi.pembelian.update');
+    Route::delete('transaksi/pembelian/{id}', [AdminTransaksiPembelianController::class, 'destroy'])->name('transaksi.pembelian.destroy');
+
+
 
     // Laporan
     Route::get('laporan/pembelian', [AdminLaporanPembelianController::class, 'index'])->name('laporan.pembelian');
+
     Route::get('laporan/pembelian/cetak', [AdminLaporanPembelianController::class, 'cetak'])->name('laporan.pembelian.cetak');
 
     Route::get('laporan/stok', [AdminLaporanStokController::class, 'stok'])->name('laporan.stok');

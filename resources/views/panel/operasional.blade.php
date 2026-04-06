@@ -1,235 +1,478 @@
-{{-- resources/views/super-admin/operasional/dashboard.blade.php --}}
+{{-- resources/views/super-admin/dashboard.blade.php --}}
 <x-app-layout>
 
-    {{-- School Info Bar --}}
-    <div class="bg-green-50 dark:bg-green-950 border-b border-green-200 dark:border-green-800 px-6 py-3 flex items-center gap-3">
-        <div class="w-9 h-9 rounded-lg bg-green-200 dark:bg-green-800 flex items-center justify-center flex-shrink-0">
-            <svg class="w-4 h-4 text-green-800 dark:text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0v6m-6-3.5l6 3.5 6-3.5"/>
-            </svg>
-        </div>
-        <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-green-900 dark:text-green-100">{{ session('sekolah_nama') }}</p>
-            <p class="text-xs text-green-700 dark:text-green-400">
-                {{ session('sekolah_alamat') }} · NPSN {{ session('sekolah_npsn') }} · {{ session('sekolah_kota') }}
+    @push('styles')
+        <style>
+            .stat-ring::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                border-radius: inherit;
+                background: radial-gradient(ellipse at top right, var(--ring-color, transparent) 0%, transparent 70%);
+                opacity: .07;
+                pointer-events: none;
+            }
+
+            .disabled-shortcut {
+                position: relative;
+            }
+
+            .disabled-shortcut:hover .disabled-tooltip {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            .disabled-tooltip {
+                opacity: 0;
+                transform: translateX(-4px);
+                transition: all .15s;
+                pointer-events: none;
+            }
+
+            @keyframes pulse-live {
+
+                0%,
+                100% {
+                    opacity: 1;
+                }
+
+                50% {
+                    opacity: .35;
+                }
+            }
+
+            .live-dot {
+                animation: pulse-live 1.6s ease-in-out infinite;
+            }
+        </style>
+    @endpush
+
+    {{-- ═══════════════════════════════════════ TOPBAR ═══ --}}
+    <div
+        class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 py-4 flex items-center justify-between sticky top-0 z-20 backdrop-blur">
+        <div>
+            <h1 class="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-violet-500 live-dot"></span>
+                Super Admin Panel
+            </h1>
+            <p class="text-xs text-gray-400 mt-0.5">
+                {{ now()->translatedFormat('l, d F Y') }} &middot; <span id="jam-live"
+                    class="tabular-nums font-mono"></span>
             </p>
         </div>
-        <div class="flex items-center gap-3 flex-shrink-0">
-            <span class="text-xs text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-900 border border-teal-200 dark:border-teal-700 rounded-full px-3 py-1">
-                Sesi Aktif
-            </span>
-            <span class="text-xs text-green-700 dark:text-green-400" id="jam-live"></span>
+        <div
+            class="flex items-center gap-2 pl-3 pr-4 py-1.5 bg-violet-50 dark:bg-violet-950/60 border border-violet-200/60 dark:border-violet-800/60 rounded-xl">
+            <div
+                class="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-[10px] font-bold">
+                {{ strtoupper(substr(auth()->user()->username ?? 'SA', 0, 2)) }}
+            </div>
+            <div>
+                <p class="text-xs font-semibold text-violet-900 dark:text-violet-100 leading-none">
+                    {{ auth()->user()->username ?? 'Super Admin' }}</p>
+                <p class="text-[10px] text-violet-500 leading-none mt-0.5">Super Admin</p>
+            </div>
         </div>
     </div>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-5">
+    <div class="py-6 px-4 sm:px-6 max-w-[1400px] mx-auto space-y-5">
 
-            {{-- STAT CARDS --}}
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {{-- ═══════════════════════════════════════
+        STAT CARDS
+        ═══════════════════════════════════════ --}}
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
 
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                    <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1.5 mb-2">
-                        <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 9v1"/></svg>
-                        Pendapatan Hari Ini
-                    </p>
-                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">
-                        Rp {{ number_format($data['pendapatanHariIni'], 0, ',', '.') }}
-                    </p>
-                    <p class="text-xs mt-1 {{ $data['deltaPendapatan'] >= 0 ? 'text-green-600' : 'text-red-500' }}">
-                        {{ $data['deltaPendapatan'] >= 0 ? '▲' : '▼' }} {{ abs($data['deltaPendapatan']) }}% vs kemarin
-                    </p>
+            <div class="stat-ring relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 overflow-hidden"
+                style="--ring-color:#7c3aed">
+                <div class="flex items-start justify-between mb-3">
+                    <div
+                        class="w-9 h-9 rounded-xl bg-violet-100 dark:bg-violet-900/60 flex items-center justify-center">
+                        <svg class="w-4.5 h-4.5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 14l9-5-9-5-9 5 9 5zm0 0v6m-6-3.5l6 3.5 6-3.5" />
+                        </svg>
+                    </div>
+                    <span
+                        class="text-[10px] font-bold text-violet-500 bg-violet-50 dark:bg-violet-900/40 px-2 py-0.5 rounded-full">Total</span>
                 </div>
-
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                    <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1.5 mb-2">
-                        <svg class="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/></svg>
-                        Transaksi Hari Ini
-                    </p>
-                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $data['transaksiHariIni'] }}</p>
-                    <p class="text-xs text-green-600 dark:text-green-400 mt-1">+{{ $data['deltaTransaksi'] }} dari kemarin</p>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                    <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1.5 mb-2">
-                        <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg>
-                        Total Stok Barang
-                    </p>
-                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ number_format($data['totalStok'], 0, ',', '.') }}</p>
-                    <p class="text-xs text-red-500 mt-1">{{ $data['stokTipis'] }} barang stok tipis</p>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                    <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1.5 mb-2">
-                        <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
-                        Pembelian Hari Ini
-                    </p>
-                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">
-                        Rp {{ number_format($data['pembelianHariIni'], 0, ',', '.') }}
-                    </p>
-                    <p class="text-xs text-gray-400 mt-1">{{ $data['jumlahPO'] }} PO masuk</p>
-                </div>
-
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $data['totalSekolah'] ?? '—' }}</p>
+                <p class="text-xs text-gray-400 mt-0.5">Sekolah terdaftar</p>
+                <p class="text-[11px] text-green-600 dark:text-green-400 mt-2 flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                    {{ $data['sekolahBaru'] ?? 0 }} baru bulan ini
+                </p>
             </div>
 
-            {{-- TRANSAKSI + AKSES CEPAT --}}
-            <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
-
-                {{-- Transaksi Terakhir --}}
-                <div class="lg:col-span-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-                    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-                        <div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">Transaksi Terakhir</p>
-                            <p class="text-xs text-gray-400">Hari ini · {{ session('sekolah_nama') }}</p>
-                        </div>
-                        <span class="text-xs bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300 px-2.5 py-1 rounded-full">
-                            {{ $data['transaksiHariIni'] }} transaksi
-                        </span>
+            <div class="stat-ring relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 overflow-hidden"
+                style="--ring-color:#059669">
+                <div class="flex items-start justify-between mb-3">
+                    <div
+                        class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/60 flex items-center justify-center">
+                        <svg class="w-4.5 h-4.5 text-emerald-600 dark:text-emerald-400" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-100 dark:divide-gray-700">
-                            <thead class="bg-gray-50 dark:bg-gray-700/50">
-                                <tr>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase">No.</th>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase">Pelanggan</th>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase">Waktu</th>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase">Total</th>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                                @forelse ($data['transaksiTerakhir'] as $data['trx'])
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                    <td class="px-4 py-2 font-mono text-xs text-gray-400">#{{ $data['trx']->no_transaksi }}</td>
-                                    <td class="px-4 py-2 text-sm text-gray-800 dark:text-gray-200">{{ $data['trx']->pelanggan->nama ?? 'Umum' }}</td>
-                                    <td class="px-4 py-2 text-xs text-gray-500">{{ $data['trx']->created_at->format('H:i') }}</td>
-                                    <td class="px-4 py-2 text-sm text-gray-800 dark:text-gray-200">Rp {{ number_format($data['trx']->total, 0, ',', '.') }}</td>
-                                    <td class="px-4 py-2">
-                                        <span class="text-xs bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300 px-2 py-0.5 rounded-full">Lunas</span>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr><td colspan="5" class="px-4 py-6 text-center text-sm text-gray-400">Belum ada transaksi hari ini</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                    <span class="flex items-center gap-1 text-[10px] font-bold text-emerald-600">
+                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full live-dot"></span> Live
+                    </span>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $data['sekolahAktif'] ?? '—' }}</p>
+                <p class="text-xs text-gray-400 mt-0.5">Sekolah aktif</p>
+                <p class="text-[11px] text-gray-400 mt-2">{{ $data['sekolahNonAktif'] ?? 0 }} nonaktif</p>
+            </div>
+
+            <div class="stat-ring relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 overflow-hidden"
+                style="--ring-color:#4338ca">
+                <div class="flex items-start justify-between mb-3">
+                    <div
+                        class="w-9 h-9 rounded-xl bg-indigo-100 dark:bg-indigo-900/60 flex items-center justify-center">
+                        <svg class="w-4.5 h-4.5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 9v1m6-9a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <span
+                        class="text-[10px] font-bold text-indigo-500 bg-indigo-50 dark:bg-indigo-900/40 px-2 py-0.5 rounded-full">Hari
+                        ini</span>
+                </div>
+                <p class="text-xl font-bold text-gray-900 dark:text-white">Rp
+                    {{ number_format($data['totalPendapatanHariIni'] ?? 0, 0, ',', '.') }}</p>
+                <p class="text-xs text-gray-400 mt-0.5">Pendapatan agregat</p>
+                <p
+                    class="text-[11px] {{ ($data['deltaPendapatan'] ?? 0) >= 0 ? 'text-green-600' : 'text-red-500' }} mt-2">
+                    {{ ($data['deltaPendapatan'] ?? 0) >= 0 ? '▲' : '▼' }} {{ abs($data['deltaPendapatan'] ?? 0) }}% vs
+                    kemarin
+                </p>
+            </div>
+
+            <div class="stat-ring relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 overflow-hidden"
+                style="--ring-color:#e11d48">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-900/60 flex items-center justify-center">
+                        <svg class="w-4.5 h-4.5 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197" />
+                        </svg>
                     </div>
                 </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $data['totalUser'] ?? '—' }}</p>
+                <p class="text-xs text-gray-400 mt-0.5">Total pengguna</p>
+                <p class="text-[11px] text-gray-400 mt-2">Admin + Kasir semua sekolah</p>
+            </div>
 
-                {{-- Akses Cepat --}}
-                <div class="lg:col-span-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-                    <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-                        <p class="text-sm font-medium text-gray-900 dark:text-white">Akses Cepat</p>
-                    </div>
-                    <div class="grid grid-cols-3 gap-2 p-3">
-                        @php
-                        $data['menus'] = [
-                            ['href' => route('kasir.dashboard'),                   'label' => 'Buka Kasir',    'bg' => 'bg-indigo-50 dark:bg-indigo-950', 'icon_color' => 'text-indigo-600', 'icon' => 'M6 9V2h12v7M6 18h12v4H6zM6 14h12a2 2 0 002-2V9H4v3a2 2 0 002 2z'],
-                            ['href' => route('admin.barang.index'),                 'label' => 'Data Barang',   'bg' => 'bg-amber-50 dark:bg-amber-950',   'icon_color' => 'text-amber-600',  'icon' => 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10'],
-                            ['href' => route('admin.transaksi.pembelian.index'),    'label' => 'Pembelian',     'bg' => 'bg-teal-50 dark:bg-teal-950',     'icon_color' => 'text-teal-600',   'icon' => 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 9v1'],
-                            ['href' => route('kasir.rekap.harian'),                 'label' => 'Rekap Harian',  'bg' => 'bg-green-50 dark:bg-green-950',   'icon_color' => 'text-green-600',  'icon' => 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'],
-                            ['href' => route('kasir.cetak.struk'),                  'label' => 'Cetak Struk',   'bg' => 'bg-blue-50 dark:bg-blue-950',     'icon_color' => 'text-blue-600',   'icon' => 'M6 9V2h12v7M6 18h12v4H6zM6 14h12a2 2 0 002-2V9H4v3a2 2 0 002 2z'],
-                            ['href' => route('admin.kategori.index'),               'label' => 'Kategori',      'bg' => 'bg-gray-100 dark:bg-gray-700',    'icon_color' => 'text-gray-500',   'icon' => 'M7 7h10M7 12h10M7 17h10'],
+        </div>
+
+        {{-- ═══════════════════════════════════════
+        SHORTCUT PANEL + DAFTAR SEKOLAH
+        ═══════════════════════════════════════ --}}
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+
+            {{-- SHORTCUT — kiri --}}
+            <div
+                class="lg:col-span-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+                    <p class="text-sm font-semibold text-gray-900 dark:text-white">Akses Cepat</p>
+                </div>
+                <div class="p-2 space-y-0.5">
+
+                    {{-- ── ADA ROUTE-NYA ── --}}
+
+                    {{-- Dashboard --}}
+                    <a href="{{ route('super-admin.dashboard') }}"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-950/40 group transition">
+                        <div
+                            class="w-7 h-7 rounded-lg bg-violet-100 dark:bg-violet-900/60 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 3h7v7H3V3zm11 0h7v7h-7V3zM3 14h7v7H3v-7zm11 0h7v7h-7v-7z" />
+                            </svg>
+                        </div>
+                        <span
+                            class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-violet-700 dark:group-hover:text-violet-300">Dashboard</span>
+                    </a>
+
+                    {{-- Semua Sekolah --}}
+                    <a href="{{ route('super-admin.sekolah.index') }}"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-950/40 group transition">
+                        <div
+                            class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-900/60 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 14l9-5-9-5-9 5 9 5zm0 0v6m-6-3.5l6 3.5 6-3.5" />
+                            </svg>
+                        </div>
+                        <span
+                            class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-violet-700 dark:group-hover:text-violet-300">Semua
+                            Sekolah</span>
+                    </a>
+
+                    {{-- Kelola User Global --}}
+                    <a href="{{ route('super-admin.user.index') }}"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-950/40 group transition">
+                        <div
+                            class="w-7 h-7 rounded-lg bg-rose-100 dark:bg-rose-900/60 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197" />
+                            </svg>
+                        </div>
+                        <span
+                            class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-violet-700 dark:group-hover:text-violet-300">Kelola
+                            User</span>
+                    </a>
+
+                    {{-- Restore Data --}}
+                    <a href="{{ route('super-admin.restore.index', ['type' => 'barang']) }}"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-950/40 group transition">
+                        <div
+                            class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/60 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </div>
+                        <span
+                            class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-violet-700 dark:group-hover:text-violet-300">Restore
+                            Data</span>
+                    </a>
+
+                    <div class="h-px bg-gray-100 dark:bg-gray-700/60 my-1 mx-2"></div>
+                    <p
+                        class="text-[10px] font-bold text-gray-300 dark:text-gray-600 uppercase tracking-widest px-3 py-1">
+                        Segera Hadir</p>
+
+                    {{-- ── BELUM ADA ROUTE — disabled ── --}}
+                    @php
+                        $comingSoon = [
+                            ['label' => 'Laporan Pembelian', 'icon' => 'M9 17v-6h6v6M9 11V9m6 2V7', 'color' => 'bg-blue-100 dark:bg-blue-900/40 text-blue-400'],
+                            ['label' => 'Laporan Stok', 'icon' => 'M3 3v18h18', 'color' => 'bg-teal-100 dark:bg-teal-900/40 text-teal-400'],
+                            ['label' => 'Analisis Produk', 'icon' => 'M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z', 'color' => 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-400'],
+                            ['label' => 'Rekap Harian', 'icon' => 'M16 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V8z', 'color' => 'bg-orange-100 dark:bg-orange-900/40 text-orange-400'],
+                            ['label' => 'Pengaturan Global', 'icon' => 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z', 'color' => 'bg-gray-100 dark:bg-gray-700 text-gray-400'],
                         ];
-                        @endphp
-                        @foreach ($data['menus'] as $data['menu'])
-                        <a href="{{ $data['menu']['href'] }}"
-                           class="flex flex-col items-center gap-1.5 p-2.5 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                            <div class="w-8 h-8 rounded-lg {{ $data['menu']['bg'] }} flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 {{ $data['menu']['icon_color'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $data['menu']['icon'] }}"/>
+                    @endphp
+                    @foreach ($comingSoon as $cs)
+                        <div
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-not-allowed select-none opacity-50">
+                            <div
+                                class="w-7 h-7 rounded-lg {{ $cs['color'] }} flex items-center justify-center flex-shrink-0">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="{{ $cs['icon'] }}" />
                                 </svg>
                             </div>
-                            <span class="text-xs text-gray-500 dark:text-gray-400 text-center leading-tight">{{ $data['menu']['label'] }}</span>
-                        </a>
-                        @endforeach
-                    </div>
-                </div>
+                            <span class="text-sm text-gray-400 dark:text-gray-500 flex-1">{{ $cs['label'] }}</span>
+                            <span
+                                class="text-[9px] font-bold bg-gray-100 dark:bg-gray-700 text-gray-400 px-1.5 py-0.5 rounded">Soon</span>
+                        </div>
+                    @endforeach
 
+                </div>
             </div>
 
-            {{-- PRODUK TERLARIS + STOK TIPIS --}}
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-                    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-                        <p class="text-sm font-medium text-gray-900 dark:text-white">Produk Terlaris</p>
-                        <span class="text-xs text-gray-400">Hari ini</span>
+            {{-- DAFTAR SEKOLAH — kanan --}}
+            <div
+                class="lg:col-span-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
+                <div
+                    class="flex items-center justify-between px-5 py-3.5 border-b border-gray-100 dark:border-gray-700">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900 dark:text-white">Daftar Sekolah</p>
+                        <p class="text-xs text-gray-400">Pantau atau masuk ke konteks sekolah tertentu</p>
                     </div>
-                    <div class="divide-y divide-gray-100 dark:divide-gray-700">
-                        @foreach ($data['produkTerlaris'] as $data['i'] => $data['produk'])
-                        <div class="flex items-center gap-3 px-4 py-2.5">
-                            <span class="text-xs text-gray-400 w-4 text-center">{{ $data['i'] + 1 }}</span>
-                            <span class="flex-1 text-sm text-gray-800 dark:text-gray-200 truncate">{{ $data['produk']->nama }}</span>
-                            <div class="w-16 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                                <div class="h-full rounded-full bg-indigo-400" style="width: {{ $data['produk']->pct }}%"></div>
-                            </div>
-                            <span class="text-xs text-gray-500 w-12 text-right">{{ $data['produk']->terjual }} pcs</span>
-                        </div>
-                        @endforeach
-                    </div>
+                    <a href="{{ route('super-admin.sekolah.index') }}"
+                        class="text-xs font-medium text-violet-600 dark:text-violet-400 hover:underline">
+                        Kelola semua →
+                    </a>
                 </div>
-
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-                    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-                        <p class="text-sm font-medium text-gray-900 dark:text-white">Stok Menipis</p>
-                        <span class="text-xs bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 px-2.5 py-0.5 rounded-full">{{ $data['stokTipis'] }} item</span>
-                    </div>
-                    <table class="min-w-full divide-y divide-gray-100 dark:divide-gray-700">
-                        <thead class="bg-gray-50 dark:bg-gray-700/50">
-                            <tr>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Barang</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Stok</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="bg-gray-50 dark:bg-gray-700/40">
+                                <th
+                                    class="px-5 py-2.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                    Sekolah</th>
+                                <th
+                                    class="px-4 py-2.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                    Kota</th>
+                                <th
+                                    class="px-4 py-2.5 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                    Status</th>
+                                <th
+                                    class="px-4 py-2.5 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                    Pantau</th>
+                                <th
+                                    class="px-4 py-2.5 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                    Operasional</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                            @foreach ($data['barangStokTipis'] as $data['item'])
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                <td class="px-4 py-2 text-sm text-gray-800 dark:text-gray-200">{{ $data['item']->nama }}</td>
-                                <td class="px-4 py-2 text-sm text-gray-500">{{ $data['item']->stok }} pcs</td>
-                                <td class="px-4 py-2">
-                                    @if($data['item']->stok == 0)
-                                        <span class="text-xs bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300 px-2 py-0.5 rounded-full">Habis</span>
-                                    @else
-                                        <span class="text-xs bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 px-2 py-0.5 rounded-full">Tipis</span>
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700/60">
+                            @forelse ($data['daftarSekolah'] ?? [] as $sekolah)
+                                <tr class="hover:bg-violet-50/30 dark:hover:bg-violet-950/10 transition">
+                                    <td class="px-5 py-3">
+                                        <div class="flex items-center gap-2.5">
+                                            <div
+                                                class="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
+                                                {{ strtoupper(substr($sekolah->nama, 0, 2)) }}
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                                    {{ Str::limit($sekolah->nama, 30) }}</p>
+                                                <p class="text-[10px] text-gray-400">{{ $sekolah->npsn ?? '-' }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 text-sm text-gray-500">{{ $sekolah->kota ?? '-' }}</td>
+                                    <td class="px-4 py-3 text-center">
+                                        @if (($sekolah->status ?? 'aktif') === 'aktif')
+                                            <span
+                                                class="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/60 dark:border-emerald-800/50 px-2 py-0.5 rounded-full">
+                                                <span class="w-1 h-1 rounded-full bg-emerald-500"></span> Aktif
+                                            </span>
+                                        @else
+                                            <span
+                                                class="text-[11px] font-medium text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">Nonaktif</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        {{-- route: super-admin.pantau (param: id) ✓ --}}
+                                        <a href="{{ route('super-admin.pantau', $sekolah->id) }}"
+                                            class="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/60 dark:border-indigo-800/50 rounded-lg px-3 py-1 hover:bg-indigo-100 dark:hover:bg-indigo-900 transition">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm-3-8a8 8 0 100 16A8 8 0 009 4z" />
+                                            </svg>
+                                            Pantau
+                                        </a>
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        {{-- Masuk mode operasional — arahkan ke route impersonate sekolah --}}
+                                        {{-- Sesuaikan action ini dengan route impersonate kamu --}}
+                                        <a href="{{ route('super-admin.sekolah.index') }}?masuk={{ $sekolah->id }}"
+                                            class="inline-flex items-center gap-1.5 text-xs font-medium text-violet-700 dark:text-violet-300 bg-violet-50 dark:bg-violet-950/60 border border-violet-200/60 dark:border-violet-800/50 rounded-lg px-3 py-1 hover:bg-violet-100 dark:hover:bg-violet-900 transition">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                            </svg>
+                                            Masuk
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="px-5 py-12 text-center">
+                                        <div class="flex flex-col items-center gap-2">
+                                            <svg class="w-8 h-8 text-gray-200 dark:text-gray-700" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                    d="M12 14l9-5-9-5-9 5 9 5zm0 0v6m-6-3.5l6 3.5 6-3.5" />
+                                            </svg>
+                                            <p class="text-sm text-gray-400">Belum ada sekolah terdaftar</p>
+                                            <a href="{{ route('super-admin.sekolah.index') }}"
+                                                class="text-xs text-violet-600 hover:underline">Tambah sekolah →</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
-
-            </div>
-
-            {{-- EXIT BAR --}}
-            <div class="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg px-4 py-3 flex items-center justify-between">
-                <p class="text-sm text-red-700 dark:text-red-300 flex items-center gap-2">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    Sedang beroperasi di konteks <strong class="font-medium">{{ session('sekolah_nama') }}</strong>. Data yang ditampilkan khusus sekolah ini.
-                </p>
-                <form method="POST" action="{{ route('super-admin.keluar-mode') }}" class="flex-shrink-0 ml-4">
-                    @csrf
-                    <button type="submit"
-                        class="text-sm text-red-700 dark:text-red-300 border border-red-300 dark:border-red-700 rounded-lg px-3 py-1.5 hover:bg-red-100 dark:hover:bg-red-900 transition">
-                        Keluar Mode
-                    </button>
-                </form>
             </div>
 
         </div>
+
+        {{-- ═══════════════════════════════════════
+        GRAFIK PENDAPATAN 7 HARI
+        ═══════════════════════════════════════ --}}
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-700">
+                <div>
+                    <p class="text-sm font-semibold text-gray-900 dark:text-white">Pendapatan Agregat Semua Sekolah</p>
+                    <p class="text-xs text-gray-400">7 hari terakhir</p>
+                </div>
+                <div class="flex items-center gap-4 text-xs text-gray-400">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-violet-400"></span>
+                        Pendapatan</span>
+                    <span class="flex items-center gap-1.5"><span
+                            class="w-3 h-3 rounded bg-indigo-200 dark:bg-indigo-700"></span> Pembelian</span>
+                </div>
+            </div>
+            <div class="p-5">
+                @php
+                    $chartDays = collect($data['grafikPendapatan'] ?? []);
+                    $maxVal = $chartDays->max('pendapatan') ?: 1;
+                @endphp
+                <div class="flex items-end justify-between gap-2 h-36">
+                    @forelse ($chartDays as $day)
+                        @php
+                            $pct = max(4, round(($day->pendapatan / $maxVal) * 100));
+                            $bPct = max(0, round((($day->pembelian ?? 0) / $maxVal) * 100));
+                        @endphp
+                        <div class="flex-1 flex flex-col items-center gap-1 group cursor-default"
+                            title="Pendapatan: Rp {{ number_format($day->pendapatan, 0, ',', '.') }}">
+                            <div class="w-full flex items-end gap-0.5 h-28">
+                                <div class="flex-1 bg-violet-400 dark:bg-violet-500 rounded-t-md group-hover:bg-violet-500 transition"
+                                    style="height:{{ $pct }}%"></div>
+                                <div class="flex-1 bg-indigo-200 dark:bg-indigo-700 rounded-t-md group-hover:bg-indigo-300 dark:group-hover:bg-indigo-600 transition"
+                                    style="height:{{ $bPct }}%"></div>
+                            </div>
+                            <span class="text-[10px] text-gray-400">
+                                {{ \Carbon\Carbon::parse($day->tanggal ?? now())->format('D') }}
+                            </span>
+                        </div>
+                    @empty
+                        @foreach(range(1, 7) as $i)
+                            <div class="flex-1 flex flex-col items-center gap-1">
+                                <div class="w-full flex items-end gap-0.5 h-28">
+                                    <div class="flex-1 bg-gray-100 dark:bg-gray-700 rounded-t-md animate-pulse"
+                                        style="height:{{ rand(20, 85) }}%"></div>
+                                    <div class="flex-1 bg-gray-100 dark:bg-gray-700 rounded-t-md animate-pulse"
+                                        style="height:{{ rand(10, 55) }}%"></div>
+                                </div>
+                                <span class="text-[10px] text-gray-300 dark:text-gray-600">—</span>
+                            </div>
+                        @endforeach
+                    @endforelse
+                </div>
+
+                <div class="flex justify-between mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                    <div>
+                        <p class="text-xs text-gray-400">Total 7 hari</p>
+                        <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                            Rp {{ number_format($chartDays->sum('pendapatan'), 0, ',', '.') }}
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-gray-400">Rata-rata/hari</p>
+                        <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                            Rp
+                            {{ number_format($chartDays->count() > 0 ? $chartDays->avg('pendapatan') : 0, 0, ',', '.') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     @push('scripts')
-    <script>
-        function tickJam() {
-            const el = document.getElementById('jam-live');
-            if (el) el.textContent = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-        }
-        tickJam();
-        setInterval(tickJam, 1000);
-    </script>
+        <script>
+            (function tick() {
+                const el = document.getElementById('jam-live');
+                if (el) el.textContent = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                setTimeout(tick, 1000);
+            })();
+        </script>
     @endpush
 
 </x-app-layout>

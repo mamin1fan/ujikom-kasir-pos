@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Sekolah;
+use App\Models\User;
 
 class SekolahController extends Controller
 {
@@ -70,6 +71,11 @@ class SekolahController extends Controller
             'is_active' => $request->is_active
         ]);
 
-        return redirect()->back()->with('success', 'Status sekolah berhasil diubah');
+
+        User::where('id_sekolah', $id)
+            ->update(['is_active' => $request->is_active]);
+
+
+        return redirect()->back()->with('success', 'Status sekolah dengan seluruh usernya berhasil diubah');
     }
 }

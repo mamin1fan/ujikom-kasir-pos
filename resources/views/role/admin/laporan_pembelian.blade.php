@@ -404,36 +404,56 @@
             </form>
 
             {{-- Active Filter Info --}}
-            @if(request()->hasAny(['mode','search', 'from', 'to', 'id_supplier', 'status_pembelian', 'month']))
-                <div
-                    class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 px-4 py-3 rounded-xl text-sm flex flex-wrap items-center gap-2">
+            {{-- FILTER SUMMARY + CETAK (selalu tampil) --}}
+            <div
+                class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 px-4 py-3 rounded-xl text-sm flex flex-wrap items-center gap-2">
+
+                {{-- Menampilkan: hanya muncul jika ada filter atau mode=today --}}
+                @if(request()->hasAny(['mode', 'search', 'from', 'to', 'id_supplier', 'status_pembelian', 'month']))
                     <span class="font-semibold">Menampilkan:</span>
-                    @if(request('from') && request('to'))
-                        <span class="bg-white/70 px-2 py-1 rounded">📅
-                            {{ \Carbon\Carbon::parse(request('from'))->format('d M Y') }} -
-                            {{ \Carbon\Carbon::parse(request('to'))->format('d M Y') }}</span>
-                    @endif
-                    @if(request('month'))
-                        <span class="bg-white/70 px-2 py-1 rounded">📆
-                            {{ \Carbon\Carbon::create()->month(request('month'))->translatedFormat('F Y') }}</span>
-                    @endif
-                    @if(request('search'))
-                        <span class="bg-white/70 px-2 py-1 rounded">🔍 "{{ request('search') }}"</span>
-                    @endif
-                    @if(request('id_supplier'))
-                        <span class="bg-white/70 px-2 py-1 rounded">🏢
-                            {{ $suppliers->firstWhere('id_supplier', request('id_supplier'))->nama ?? '' }}</span>
-                    @endif
-                    @if(request('status_pembelian'))
-                        <span class="bg-white/70 px-2 py-1 rounded">📌 {{ ucfirst(request('status_pembelian')) }}</span>
-                    @endif
-                    {{-- GANTI SEMUA LINK CETAK MENJADI INI --}}
-                    <a href="{{ route('admin.laporan.pembelian.cetak', request()->except('page')) }}" target="_blank"
-                        class="ms-auto btn-green">
-                        🖨️ Cetak Laporan
-                    </a>
-                </div>
-            @endif
+                @endif
+
+                {{-- Mode Today (Hari Ini) --}}
+                @if(request('mode') === 'today')
+                    <span class="bg-white/70 px-2 py-1 rounded">📅 Hari Ini
+                        ({{ \Carbon\Carbon::today()->translatedFormat('d F Y') }})</span>
+                @endif
+
+                {{-- Filter tanggal custom --}}
+                @if(request('from') && request('to'))
+                    <span class="bg-white/70 px-2 py-1 rounded">📅
+                        {{ \Carbon\Carbon::parse(request('from'))->format('d M Y') }} -
+                        {{ \Carbon\Carbon::parse(request('to'))->format('d M Y') }}</span>
+                @endif
+
+                {{-- Filter bulan --}}
+                @if(request('month'))
+                    <span class="bg-white/70 px-2 py-1 rounded">📆
+                        {{ \Carbon\Carbon::create()->month(request('month'))->translatedFormat('F Y') }}</span>
+                @endif
+
+                {{-- Search --}}
+                @if(request('search'))
+                    <span class="bg-white/70 px-2 py-1 rounded">🔍 "{{ request('search') }}"</span>
+                @endif
+
+                {{-- Supplier --}}
+                @if(request('id_supplier'))
+                    <span class="bg-white/70 px-2 py-1 rounded">🏢
+                        {{ $suppliers->firstWhere('id_supplier', request('id_supplier'))->nama ?? '' }}</span>
+                @endif
+
+                {{-- Status --}}
+                @if(request('status_pembelian'))
+                    <span class="bg-white/70 px-2 py-1 rounded">📌 {{ ucfirst(request('status_pembelian')) }}</span>
+                @endif
+
+                {{-- Tombol Cetak selalu muncul --}}
+                <a href="{{ route('admin.laporan.pembelian.cetak', request()->except('page')) }}" target="_blank"
+                    class="ms-auto btn-green">
+                    🖨️ Cetak Laporan
+                </a>
+            </div>
 
             {{-- TABLE --}}
             <div class="lp-card overflow-hidden">

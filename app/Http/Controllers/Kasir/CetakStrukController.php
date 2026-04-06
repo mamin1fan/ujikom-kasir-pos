@@ -60,7 +60,7 @@ class CetakStrukController extends Controller
             ->whereNotNull('cara_bayar')
             ->distinct()
             ->pluck('cara_bayar');
-            
+
         $jenisTransaksi = Penjualan::select('jenis_transaksi')
             ->whereNotNull('jenis_transaksi')
             ->distinct()
@@ -86,27 +86,31 @@ class CetakStrukController extends Controller
         $penjualan = Penjualan::with([
             'user',
             'pelanggan',
-            'detailPenjualan.barang', // ← relasi yang benar sesuai model DetailPenjualan
+            'detailPenjualan.barang'   // relasi sudah benar
         ])->findOrFail($id);
 
-        $items = $penjualan->detailPenjualan->map(function ($d) {
+        // Mapping items dengan data lengkap
+        $items = $penjualan->detailPenjualan->map(function ($detail) {
             return [
-                'nama' => $d->barang->nama_barang ?? '-', // ganti jika kolom nama barang berbeda
-                'qty' => $d->jumlah_barang,
-                'harga' => $d->harga_jual,
-                'subtotal' => $d->subtotal,
+                'nama_barang' => $detail->barang->nama_barang ?? '-',
+                'qty' => (int) $detail->jumlah_barang,
+                'harga' => (int) $detail->harga_jual,
+                'diskon' => (int) ($detail->diskon_nominal ?? 0),
+                'subtotal' => (int) $detail->subtotal,
             ];
         });
 
         return response()->json([
-            'tanggal' => Carbon::parse($penjualan->tanggal_penjualan)->translatedFormat('d M Y'),
-            'kasir' => $penjualan->user->username ?? '-',
-            'pelanggan' => $penjualan->pelanggan->nama_pelanggan ?? null,
+            'success' => true,
+            'id_penjualan' => $penjualan->id_penjualan,
+            'tanggal' => Carbon::parse($penjualan->tanggal_penjualan)->translatedFormat('d M Y H:i'),
+            'kasir' => $penjualan->user->username ?? $penjualan->user->name ?? '-',
+            'pelanggan' => $penjualan->pelanggan?->nama_pelanggan ?? 'Umum / Cash',
             'cara_bayar' => $penjualan->cara_bayar ?? '-',
             'note' => $penjualan->note ?? null,
-            'total_faktur' => $penjualan->total_faktur,
-            'total_bayar' => $penjualan->total_bayar,
-            'kembalian' => $penjualan->kembalian,
+            'total_faktur' => (int) $penjualan->total_faktur,
+            'total_bayar' => (int) $penjualan->total_bayar,
+            'kembalian' => (int) $penjualan->kembalian,
             'items' => $items,
         ]);
     }

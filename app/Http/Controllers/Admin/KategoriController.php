@@ -83,16 +83,6 @@ class KategoriController extends Controller
     {
         $kategori = Kategori::findOrFail($id);
 
-        $produk = Barang::where('id_kategori', $id)
-            ->where('is_delete', 0)
-            ->count();
-
-        if ($produk > 0) {
-            return response()->json([
-                'status' => 'error',
-                'message' => "Kategori masih digunakan oleh $produk produk"
-            ], 400);
-        }
 
         $kategori->update([
             'is_delete' => 1,

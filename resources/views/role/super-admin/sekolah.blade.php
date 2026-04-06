@@ -116,116 +116,143 @@
                 </div>
 
 
-                {{-- Table Sekolah --}}
-                <div class="overflow-x-auto mt-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {{-- Table Sekolah (UI yang sudah di-upgrade total) --}}
+<div class="overflow-x-auto mt-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        @foreach ($sekolahs as $item)
+                <div class="group relative bg-white dark:bg-gray-800 rounded-3xl shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700">
 
-                        @foreach ($sekolahs as $item)
-                                                <div
-                                                    class="group relative bg-white dark:bg-gray-800 rounded-2xl shadow p-5 
-                                                                        hover:shadow-2xl hover:-translate-y-1 transition duration-300 flex flex-col">
+                    {{-- Top accent + Header --}}
+                    <div class="flex items-start justify-between px-6 pt-6 pb-4 border-b border-gray-100 dark:border-gray-700">
+                        {{-- School Avatar + Name --}}
+                        <div class="flex items-center gap-x-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-600 text-white flex items-center justify-center text-xl font-semibold rounded-2xl flex-shrink-0 shadow-inner">
+                                {{ strtoupper(substr($item->nama_sekolah, 0, 1)) }}
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white group-hover:text-indigo-600 transition-colors">
+                                    {{ $item->nama_sekolah }}
+                                </h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
+                                    {{ $item->alamat_sekolah }}
+                                </p>
+                            </div>
+                        </div>
 
-                                                    {{-- 🔥 HEADER --}}
-                                                    <div class="flex justify-between items-start mb-3">
-                                                        <div>
-                                                            <h3 class="text-lg font-semibold group-hover:text-indigo-600 transition">
-                                                                {{ $item->nama_sekolah }}
-                                                            </h3>
-                                                            <p class="text-xs text-gray-400">
-                                                                {{ $item->alamat_sekolah }}
-                                                            </p>
-                                                        </div>
-
-                                                        <div>
-                                                            @if ($item->is_active)
-                                                                <span class="flex items-center gap-1 text-green-500 text-xs font-medium">
-                                                                    ● Aktif
-                                                                </span>
-                                                            @else
-                                                                <span class="flex items-center gap-1 text-red-500 text-xs font-medium">
-                                                                    ● Offline
-                                                                </span>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-
-                                                    {{-- 🔥 MINI STATS --}}
-                                                    <div class="grid grid-cols-3 gap-3 my-4 text-center">
-
-                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg">
-                                                            <p class="text-xs text-gray-400">User</p>
-                                                            <p class="font-bold">{{ $item->users_count ?? 0 }}</p>
-                                                        </div>
-
-                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg">
-                                                            <p class="text-xs text-gray-400">Transaksi</p>
-                                                            <p class="font-bold">{{ $item->transaksi_count ?? 0 }}</p>
-                                                        </div>
-
-                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg">
-                                                            <p class="text-xs text-gray-400">Hari Ini</p>
-                                                            <p class="font-bold">{{ $item->today_transaksi ?? 0 }}</p>
-                                                        </div>
-
-                                                    </div>
-
-                                                    {{-- 🌐 WEBSITE --}}
-                                                    <div class="text-xs text-gray-500 mb-4 truncate">
-                                                        @if ($item->website)
-                                                            🌐 {{ $item->website }}
-                                                        @else
-                                                            Tidak ada website
-                                                        @endif
-                                                    </div>
-
-                                                    {{-- 🔥 ACTION --}}
-                                                    <div class="mt-auto flex justify-between items-center">
-
-                                                        <div class="flex gap-2">
-
-                                                            {{-- EDIT --}}
-                                                            <button onclick="editSekolah(this)" data-sekolah='@json($item)'
-                                                                class="px-3 py-1 text-xs bg-yellow-500 text-white rounded hover:bg-yellow-600">
-                                                                Edit
-                                                            </button>
-
-                                                            {{-- STATUS --}}
-                                                            <form action="{{ route('super-admin.sekolah.status', $item->id_sekolah) }}"
-                                                                method="POST" class="form-toggle">
-                                                                @csrf
-                                                                @method('PUT')
-
-                                                                <input type="hidden" name="is_active" value="{{ $item->is_active ? 0 : 1 }}">
-
-                                                                <button class="px-3 py-1 text-xs text-white rounded
-                                                                                {{ $item->is_active ? 'bg-red-600' : 'bg-green-600' }}">
-                                                                    {{ $item->is_active ? 'Off' : 'On' }}
-                                                                </button>
-                                                            </form>
-
-                                                        </div>
-
-                                                        {{-- 🔥 CTA UTAMA --}}
-                                                        <a href="{{ route('super-admin.pantau', $item->id_sekolah) }}"
-                                                            class="px-4 py-1 text-xs bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-                                                            👁 Pantau
-                                                        </a>
-
-                                                    </div>
-
-
-                                                    {{-- 🔥 HOVER OVERLAY --}}
-                                                    <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition
-                            bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none"></div>
-
-
-                                                </div>
-
-
-                        @endforeach
-
+                        {{-- Status Badge (super clean) --}}
+                        @if ($item->is_active)
+                            <span class="inline-flex items-center gap-x-1.5 px-3 py-1 rounded-3xl text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400">
+                                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                                Aktif
+                            </span>
+                        @else
+                            <span class="inline-flex items-center px-3 py-1 rounded-3xl text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-400">
+                                Tidak Aktif
+                            </span>
+                        @endif
                     </div>
+
+                    {{-- Mini Stats (modern & clean) --}}
+                    <div class="px-6 py-5 grid grid-cols-3 gap-4 border-b border-gray-100 dark:border-gray-700">
+                        <div class="text-center">
+                            <div class="flex items-center justify-center mx-auto w-8 h-8 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-2">
+                                <!-- User Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 01-5.356-1.857M12 20v-2a3 3 0 00-3-3H6a3 3 0 00-3 3v2m-6-2a3 3 0 013-3m0 0a3 3 0 013-3" />
+                                </svg>
+                            </div>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">User</p>
+                            <p class="text-2xl font-semibold text-gray-900 dark:text-white mt-0.5">{{ $item->users_count ?? 0 }}</p>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="flex items-center justify-center mx-auto w-8 h-8 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-2xl mb-2">
+                                <!-- Transaksi Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3" />
+                                </svg>
+                            </div>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Transaksi</p>
+                            <p class="text-2xl font-semibold text-gray-900 dark:text-white mt-0.5">{{ $item->transaksi_count ?? 0 }}</p>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="flex items-center justify-center mx-auto w-8 h-8 bg-sky-50 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 rounded-2xl mb-2">
+                                <!-- Hari Ini Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2" />
+                                </svg>
+                            </div>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Hari Ini</p>
+                            <p class="text-2xl font-semibold text-gray-900 dark:text-white mt-0.5">{{ $item->today_transaksi ?? 0 }}</p>
+                        </div>
+                    </div>
+
+                    {{-- Website --}}
+                    <div class="px-6 py-4 text-sm">
+                        @if ($item->website)
+                            <a href="{{ $item->website }}" target="_blank" 
+                               class="flex items-center gap-x-2 text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 4.01V8" />
+                                </svg>
+                                <span class="truncate">{{ $item->website }}</span>
+                            </a>
+                        @else
+                            <span class="flex items-center gap-x-2 text-gray-400 dark:text-gray-500 text-sm italic">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 4.01V8" />
+                                </svg>
+                                Belum ada website
+                            </span>
+                        @endif
+                    </div>
+
+                    {{-- Actions --}}
+                    <div class="mt-auto px-6 py-5 bg-gray-50 dark:bg-gray-900 flex items-center justify-between border-t border-gray-100 dark:border-gray-700">
+                        <div class="flex items-center gap-x-2">
+                            {{-- Edit --}}
+                            <button onclick="editSekolah(this)" 
+                                    data-sekolah='@json($item)'
+                                    class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 rounded-2xl transition-colors flex items-center gap-x-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                                Edit
+                            </button>
+
+                            {{-- Toggle Status --}}
+                            <form action="{{ route('super-admin.sekolah.status', $item->id_sekolah) }}" method="POST" class="form-toggle">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="is_active" value="{{ $item->is_active ? 0 : 1 }}">
+                                <button type="submit"
+                                        class="px-5 py-2.5 text-sm font-medium rounded-2xl transition-colors
+                                        {{ $item->is_active
+            ? 'bg-red-500 hover:bg-red-600 text-white'
+            : 'bg-emerald-500 hover:bg-emerald-600 text-white' }}">
+                                    {{ $item->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
+                                </button>
+                            </form>
+                        </div>
+
+                        {{-- Pantau Button (premium look) --}}
+                        <a href="{{ route('super-admin.pantau', $item->id_sekolah) }}"
+                           class="inline-flex items-center gap-x-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-3xl transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5 16.477 5 20.268 7.943 21.542 12 20.268 16.057 16.477 19 12 19 7.523 19 3.732 16.057 2.458 12z" />
+                            </svg>
+                            Pantau
+                        </a>
+                    </div>
+
+                    {{-- Subtle hover overlay --}}
+                    <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 pointer-events-none transition rounded-3xl"></div>
                 </div>
+        @endforeach
+    </div>
+</div>
 
             </div>
 
